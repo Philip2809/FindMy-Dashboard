@@ -1,8 +1,7 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './map.css';
-import { ReportPoint } from "../data";
 import { Checkbox } from "@mui/material";
 import DataContext from "../context/data";
 import { LatestController } from "./latest-controller";
@@ -22,10 +21,9 @@ function Map() {
   if (!context) return null;
   const mapContainer = useRef(null) as any;
   const map = useRef(null) as any;
-  const [clickedReports, setClickedReports] = useState<ReportPoint[]>([]);
 
   // Use useRef to store the controller instance, so it's only created once
-  const controller = useRef<LatestController>(new LatestController(setClickedReports, context.setSeeingReports));
+  const controller = useRef<LatestController>(new LatestController(context.setClickedReports, context.setSeeingReports));
 
   const lng = 0;
   const lat = 0;
@@ -71,7 +69,6 @@ function Map() {
         });
         if (!bounds.isEmpty()) map.current.fitBounds(bounds, { padding: 100, animate: false });
         firstWithData = false;
-        console.log(map.current);
       }
     }
   }, [context?.tagsWithReports]); // Only re-run when the context changes

@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-from flask import Flask
+from flask import Flask, request, Response
+from flask_cors import CORS
 from routes.tags import tags_blueprint
 from routes.keys import keys_blueprint
 from sqlalchemy import inspect  # Import the inspect function from SQLAlchemy
@@ -12,6 +13,14 @@ from db import db  # Import db from the new db.py
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Enable CORS
+CORS(app)
+
+@app.before_request
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
 
 # Load configuration
 app.config.from_object(config.Config)

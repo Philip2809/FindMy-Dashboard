@@ -1,4 +1,5 @@
-import { Tag, tags } from "./temp";
+import { Tag } from "./@types";
+import { getTags } from "./utils/http/tags";
 
 function getQuery(latest?: number) {
     return `
@@ -44,25 +45,24 @@ export function reportsToGeoJSON(tag: Tag, data: Report[]): ReportPoint[] {
 }
 
 export class DataReceiver {
-    static getLatest() {
-        return DataReceiver.send(getQuery(15))
-            .then((response) => response.text())
-            .then(this.parseCsv)
-            .then(this.formatByTag);
+    static async getLatest() {
+        const tags = await getTags();
+        const response = await DataReceiver.send(getQuery(15));
+        const data = await response.text();
+        const reports = this.parseCsv(data);
+        return this.formatByTag(tags, reports);
     }
 
-    static formatByTag(reports?: Report[]) {
+    static formatByTag(tags: Tag[],reports?: Report[]) {
         if (!reports) return;
         reports.sort((a, b) => b.timestamp - a.timestamp);
 
         const mappedData = new Map<Tag, Report[]>();
 
         tags.forEach(async (tag) => {
-            // const hashed_public_key = await publicToHashed(tag.key);
-            const reportsForTag = reports.filter((report) => report.hashed_public_key === tag.hashed_key);
+            const reportsForTag = reports.filter((report) => tag.keys.some((key) => key.hashed_public_key === report.hashed_public_key));
             mappedData.set(tag, reportsForTag);
         });
-        // await Promise.all(promises);
 
         return mappedData;
     }
@@ -101,7 +101,7 @@ export class DataReceiver {
                 query,
                 type: "flux",
             })
-        })
+        });
     }
 }
 

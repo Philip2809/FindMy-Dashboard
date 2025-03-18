@@ -1,11 +1,9 @@
 import maplibregl, { GeoJSONSource } from "maplibre-gl";
 import { circle } from '@turf/circle';
+import { LatestMapLayers } from "./enums";
 
 
 export class AccuracyCircle {
-
-    static ID = 'accuracy-circle';
-
     constructor(public map: maplibregl.Map) {
         this.addLayer();
     }
@@ -17,18 +15,18 @@ export class AccuracyCircle {
         };
         const geojson = circle(coordinates, radius, options);
 
-        (this.map.getSource(AccuracyCircle.ID) as GeoJSONSource).setData(geojson);
+        (this.map.getSource(LatestMapLayers.accuracy) as GeoJSONSource).setData(geojson);
     }
 
     removeAccuracy() {
-        (this.map.getSource(AccuracyCircle.ID) as GeoJSONSource).setData({
+        (this.map.getSource(LatestMapLayers.accuracy) as GeoJSONSource).setData({
             type: 'FeatureCollection',
             features: []
         });
     }
 
     addLayer() {
-        this.map.addSource(AccuracyCircle.ID, {
+        this.map.addSource(LatestMapLayers.accuracy, {
             type: 'geojson',
             data: {
                 type: 'FeatureCollection',
@@ -37,9 +35,9 @@ export class AccuracyCircle {
         });
 
         this.map.addLayer({
-            id: AccuracyCircle.ID,
+            id: LatestMapLayers.accuracy,
             type: 'fill',
-            source: AccuracyCircle.ID,
+            source: LatestMapLayers.accuracy,
             paint: {
                 'fill-color': '#8CCFFF',
                 'fill-opacity': 0.3

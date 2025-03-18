@@ -53,8 +53,13 @@ export class LatestController {
                 this.accuracyCircle?.removeAccuracy();
                 return;
             }
+
             this.setClickedReports(features);
-            this.accuracyCircle?.setAccuracy(features[0].geometry.coordinates, features[0].properties.horizontal_accuracy);
+
+            if (features.length === 1)
+                this.accuracyCircle?.setAccuracy(features[0].geometry.coordinates, features[0].properties.horizontal_accuracy);
+            else
+                this.accuracyCircle?.removeAccuracy();
         });
 
         this.map?.on('moveend', this.refreshSeeingReports.bind(this));

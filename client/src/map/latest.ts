@@ -33,9 +33,9 @@ export class LatestLayer {
             });
         });
 
-        allPoints.features.forEach((feature: any, index: any) => {
-            console.log(index, feature.geometry.coordinates);
-        });
+        // allPoints.features.forEach((feature: any, index: any) => {
+        //     console.log(index, feature.geometry.coordinates);
+        // });
 
         (this.map.getSource(LatestMapLayers.main) as any).setData(allPoints);
         (this.map.getSource('line') as any).setData(allPoints);

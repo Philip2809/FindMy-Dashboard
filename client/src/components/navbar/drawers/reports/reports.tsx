@@ -32,12 +32,13 @@ const Reports = () => {
                     height={height}
                     width={width}
                     itemSize={90}
-                    itemCount={context.seeingReports.length + 1}
+                    itemCount={(context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length) + 1}
                     overscanCount={5}>
                     {({ index, style }: ListChildComponentProps) => {
-                        const report = context.seeingReports[index];
+                        const report = (context.clickedReports.length ? context.clickedReports : context.seeingReports)[index];
                         if (! report) return <div />;
-                        const tag = tags.find(tag => tag.hashed_key === report.properties.hashed_public_key);
+                        // const tag = tags.find(tag => tag.hashed_key === report.properties.hashed_public_key);
+                        const tag = tags.find(tag => tag.id === report.properties.tagId);
                         if (!tag) return null;
                         return (
                             <ListItem style={style} key={index} alignItems="flex-start">

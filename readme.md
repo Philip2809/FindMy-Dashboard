@@ -21,6 +21,12 @@ ideas:
 - reports tab show what you are currently seeing in your view, shown by one color
 - if you click on a group of reports they are shown in the reports tab, indicated by another color
 
+## Todo
+
+- 2FA codes in client
+- Historical data
+
+
 ## Debug
 
 The .env file setup is not very pretty yet, working on a better setup for this as well

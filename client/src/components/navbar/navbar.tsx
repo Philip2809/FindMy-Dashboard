@@ -53,7 +53,9 @@ const Navbar = () => {
                     <BottomNavigationAction
                         key={index}
                         label={<Typography>{drawer.text}</Typography>}
-                        icon={drawer.showBadge ? <Badge badgeContent={context.seeingReports.length} max={Infinity} color="success"> {drawer.icon} </Badge> : drawer.icon} />
+                        icon={drawer.showBadge ? <Badge badgeContent={
+                            context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length
+                        } max={Infinity} color={ context.clickedReports.length ? 'info' : 'success' }> {drawer.icon} </Badge> : drawer.icon} />
                 ))}
             </BottomNavigation>
         </>
