@@ -1,0 +1,17 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    height: calc(var(--vh, 1vh) * 80);
+    width: 100%;
+    overflow: hidden;
+    background: white;
+}
+
+.row {
+    border-radius: 5px !important;
+    border: 1px solid white !important;
+}
+
+.height {
+    height: calc(var(--vh, 1vh) * 80) !important;
+}
