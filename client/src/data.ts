@@ -28,15 +28,15 @@ export interface Report {
 export type ReportPointProperties = Report & { color: string, index: number, tagId: number };
 export type ReportPoint = GeoJSON.Feature<GeoJSON.Point, ReportPointProperties>;
 
-export function reportsToGeoJSON(tag: Tag, data: Report[]): ReportPoint[] {
-    return data.map((d, index) => ({
+export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
+    return reports.map((report, index) => ({
         type: "Feature",
         geometry: {
             type: "Point",
-            coordinates: [d.longitude, d.latitude]
+            coordinates: [report.longitude, report.latitude]
         },
         properties: {
-            ...d,
+            ...report,
             color: tag.color,
             tagId: tag.id,
             index
@@ -53,18 +53,16 @@ export class DataReceiver {
         return this.formatByTag(tags, reports);
     }
 
-    static formatByTag(tags: Tag[],reports?: Report[]) {
+    static formatByTag(tags: Tag[], reports?: Report[]) {
         if (!reports) return;
         reports.sort((a, b) => b.timestamp - a.timestamp);
 
-        const mappedData = new Map<Tag, Report[]>();
+        const mappedTags = new Map(tags.map((tag) => [tag.id, tag]));
+        const mappedReports = new Map(tags.map((tag) => 
+            [tag.id, reports.filter((report) => tag.keys.some((key) => key.hashed_public_key === report.hashed_public_key))]
+        ));
 
-        tags.forEach(async (tag) => {
-            const reportsForTag = reports.filter((report) => tag.keys.some((key) => key.hashed_public_key === report.hashed_public_key));
-            mappedData.set(tag, reportsForTag);
-        });
-
-        return mappedData;
+        return { mappedTags, mappedReports };
     }
 
     static parseValue(value: string) {

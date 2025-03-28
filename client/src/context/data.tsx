@@ -1,19 +1,23 @@
 import { createContext, useEffect, useState } from 'react';
-import { DataStateContext, TagsWithReports } from '../@types';
-import { DataReceiver, ReportPoint } from '../data';
+import { DataStateContext, Tag } from '../@types';
+import { DataReceiver, Report, ReportPoint } from '../data';
 
 
 const DataContext = createContext<DataStateContext | null>(null)
 
 export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
-    const [tagsWithReports, setTagsWithReports] = useState<TagsWithReports>(new Map());
+    const [tags, setTags] = useState<Map<number, Tag>>(new Map());
+    const [reports, setReports] = useState<Map<number, Report[]>>(new Map());
     const [seeingReports, setSeeingReports] = useState<ReportPoint[]>([]);
     const [clickedReports, setClickedReports] = useState<ReportPoint[]>([]);
 
     const refreshData = () => {
-        DataReceiver.getLatest().then((reports) => {
-            if (!reports) return;
-            setTagsWithReports(reports);
+        console.log('Refreshing data...');
+        DataReceiver.getLatest().then((res) => {
+            if (!res) return;
+            console.log(res.mappedTags)
+            setTags(res.mappedTags);
+            setReports(res.mappedReports);
         });
     }
 
@@ -23,7 +27,7 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
 
     return (
         <DataContext.Provider value={{ 
-            tagsWithReports, refreshData,
+            tags, reports, refreshData,
             seeingReports, setSeeingReports,
             clickedReports, setClickedReports
             }}>

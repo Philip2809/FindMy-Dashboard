@@ -57,12 +57,12 @@ function Map() {
 
   // Effect to update data when context changes
   useEffect(() => {
-    if (context?.tagsWithReports) {
-      controller.current.setData(context.tagsWithReports);
+    if (context?.reports) {
+      controller.current.setData(context.tags, context.reports);
 
-      if (context.tagsWithReports.size && firstWithData) {
+      if (context.reports.size && firstWithData) {
         const bounds = new maplibregl.LngLatBounds();
-        context.tagsWithReports.forEach((reports) => {
+        context.reports.forEach((reports) => {
           reports.forEach((report) => {
             bounds.extend([report.longitude, report.latitude]);
           });
@@ -71,7 +71,7 @@ function Map() {
         firstWithData = false;
       }
     }
-  }, [context?.tagsWithReports]); // Only re-run when the context changes
+  }, [context?.tags, context?.reports]); // Only re-run when the context changes
 
   return (
     <div ref={mapContainer} className="map">

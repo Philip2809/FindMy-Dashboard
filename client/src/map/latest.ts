@@ -1,6 +1,6 @@
 import maplibregl from "maplibre-gl";
 import { reportsToGeoJSON } from "../data";
-import { TagsWithReports } from "../@types";
+import { Reports, Tags } from "../@types";
 import { LatestMapLayers } from "./enums";
 
 export class LatestLayer {
@@ -10,7 +10,7 @@ export class LatestLayer {
         this.addLayer();
     }
 
-    setData(tagsWithReports: TagsWithReports) {
+    setData(tags: Tags, reports: Reports) {
         const allPoints = {
             type: 'FeatureCollection' as const,
             features: [] as any
@@ -21,8 +21,8 @@ export class LatestLayer {
             features: [] as any
         };
 
-        tagsWithReports.forEach((reports, tag) => {
-            const features = reportsToGeoJSON(tag, reports);
+        tags.forEach((tag, tagId) => {
+            const features = reportsToGeoJSON(tag, reports.get(tagId) || []);
             allPoints.features.push(...features);
             allLineTracks.features.push({
                 type: 'Feature' as const,

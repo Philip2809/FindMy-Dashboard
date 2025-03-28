@@ -8,7 +8,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
 import { useState, useContext, useRef } from "react";
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Stack, TextField } from '@mui/material';
+import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, Stack, TextField } from '@mui/material';
 import DataContext from '../../../../context/data';
 import ReactIcon from '../../../../icon';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -24,12 +24,9 @@ import { addKey, deleteKey, getPrivateKey } from '../../../../utils/http/keys';
 const Tags = () => {
 
     const context = useContext(DataContext);
-    const tags = Array.from(context?.tagsWithReports.keys() || []);
     const [index, setIndex] = useState(0);
-    const [selectedTag, setSelectedTag] = useState<Tag>();
+    const [selectedTag, setSelectedTag] = useState<number>();
     const [selectedKey, setSelectedKey] = useState<Key>();
-
-    const intervalRef = useRef<HTMLDivElement>(null);
 
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -50,6 +47,7 @@ const Tags = () => {
         if (!selectedKey) return;
         deleteKey(selectedKey.public_key).then(() => {
             console.log('Key deleted');
+            context?.refreshData();
         });
         handleCloseDeleteDialog();
     }
@@ -64,102 +62,83 @@ const Tags = () => {
 
     const handleAdd = () => {
         if (!selectedTag) return;
-        addKey(selectedTag.id).then(() => {
+        const tag = context?.tags.get(selectedTag);
+        if (!tag) return;
+        addKey(tag.id).then(() => {
             console.log('Key added');
+            context?.refreshData();
         });
         handleCloseAddDialog();
-        context?.refreshData();
     }
 
     const tagsJSX = (
-        <AutoSizer className={styles.height}>
-            {({ height, width }: Size) => (
-                <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemSize={90}
-                    itemCount={context?.tagsWithReports.size || 0}
-                    overscanCount={5}>
-                    {({ index, style }: ListChildComponentProps) => {
-                        const tag = tags[index];
-                        if (!tag) return null;
-                        return (
-                            <ListItem style={style} key={index} alignItems="flex-start">
-                                <ListItemButton
-                                    disableRipple
-                                    // onClick={() => { console.log('clicked list item') }}
-                                    className={styles.row}>
-                                    <ListItemAvatar>
-                                        <Avatar sx={{ backgroundColor: tag.color, color: 'inherit' }}>
-                                            <ReactIcon icon={tag.icon} />
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText
-                                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                                        primary={tag.name}
-                                        secondary={'Last seen: 5 minutes ago'} />
-                                    <Stack direction="row" spacing={-1}>
-                                        <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedTag(tag); setTimeout(() => setIndex(1), 0); }}>
-                                            <KeyIcon fontSize='large' />
-                                        </IconButton>
-                                    </Stack>
-                                </ListItemButton>
-                            </ListItem>
+        <>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1em' }}>
+                <Chip label={'Add'} icon={<AddIcon />} onClick={() => handleOpenAddDialog()} />
+            </div>
 
-                        )
-                    }}
-                </FixedSizeList>
-            )}
-        </AutoSizer>
+            <List>
+                {context?.tags && Array.from(context?.tags.values()).map((tag, index) => (
+                    <ListItem key={index} alignItems="flex-start">
+                        <ListItemButton
+                            disableRipple
+                            className={styles.row}>
+                            <ListItemAvatar>
+                                <Avatar sx={{ backgroundColor: tag.color, color: 'inherit' }}>
+                                    <ReactIcon icon={tag.icon} />
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                                sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                                primary={tag.name}
+                                secondary={'Last seen: 5 minutes ago'} />
+                            <Stack direction="row" spacing={-1}>
+                                <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedTag(tag.id); setTimeout(() => setIndex(1), 0); }}>
+                                    <KeyIcon fontSize='large' />
+                                </IconButton>
+                            </Stack>
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+        </>
     )
 
     const tabs = [tagsJSX];
 
-
     if (selectedTag) {
-        console.log(intervalRef);
         tabs.push((
-            <AutoSizer className={styles.height}>
-                {({ height, width }: Size) => (
-                    <>
-                        <div ref={intervalRef} style={{ display: 'flex', justifyContent: 'flex-end', padding: '1em' }}>
-                            <Chip label={'Back'} icon={<AddIcon />} style={{ justifyItems: 'flex-start' }} onClick={() => handleOpenAddDialog() } />
-                            <Chip label={'Add'} icon={<AddIcon />} onClick={() => handleOpenAddDialog() } />
-                        </div>
+            <>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1em' }}>
+                    <Chip label={'Back'} icon={<AddIcon />} style={{ justifyItems: 'flex-start' }} onClick={() => handleOpenAddDialog()} />
+                    <Chip label={'Add'} icon={<AddIcon />} onClick={() => handleOpenAddDialog()} />
+                </div>
 
-                        <FixedSizeList
-                            height={height - (intervalRef.current?.clientHeight || 0)}
-                            width={width}
-                            itemSize={90}
-                            itemCount={selectedTag.keys.length}
-                            overscanCount={5}>
-                            {({ index, style }: ListChildComponentProps) => {
-                                return (
-                                    <ListItem style={style} key={index} alignItems="flex-start">
-                                        <ListItemButton
-                                            disableRipple
-                                            onClick={() => { console.log('clicked list item'); }}
-                                            className={styles.row}>
-                                            <ListItemText
-                                                sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                                                primary={selectedTag.keys[index].hashed_public_key}
-                                                secondary={getMacAddress(selectedTag.keys[index].public_key)} />
-                                            <Stack direction="row" spacing={-1}>
-                                                <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedKey(selectedTag.keys[index]); handleOpenDetailsDialog(); }}>
-                                                    <EyeIcon />
-                                                </IconButton>
-                                                <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedKey(selectedTag.keys[index]); handleOpenDeleteDialog(); }}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Stack>
-                                        </ListItemButton>
-                                    </ListItem>
 
-                                );
-                            }}
-                        </FixedSizeList></>
-                )}
-            </AutoSizer>
+                <List>
+                    {context?.tags.get(selectedTag)?.keys.map((key, index) => (
+                        <ListItem key={index} alignItems="flex-start">
+                            <ListItemButton
+                                disableRipple
+                                onClick={() => { console.log('clicked list item'); }}
+                                className={styles.row}>
+                                <ListItemText
+                                    sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                                    primary={key.hashed_public_key}
+                                    secondary={getMacAddress(key.public_key)} />
+                                <Stack direction="row" spacing={-1}>
+                                    <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedKey(key); handleOpenDetailsDialog(); }}>
+                                        <EyeIcon />
+                                    </IconButton>
+                                    <IconButton color='inherit' onClick={(e) => { e.stopPropagation(); setSelectedKey(key); handleOpenDeleteDialog(); }}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Stack>
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+            </>
         ))
     }
 
@@ -203,7 +182,7 @@ const Tags = () => {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         A new private key will be generated and added to the tag. If you want to add
-                        an existing key, paste the private key below (in base64). 
+                        an existing key, paste the private key below (in base64).
                     </DialogContentText>
                     <br />
                     <TextField
@@ -230,7 +209,7 @@ const Tags = () => {
                     <Button onClick={handleDetails} variant='contained' color='info'>View private key</Button>
                     <br />
                     <br />
-                    { shownPrivateKey && <code> {shownPrivateKey} </code> }
+                    {shownPrivateKey && <code> {shownPrivateKey} </code>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDetailsDialog} variant='contained' color='secondary'>Close</Button>

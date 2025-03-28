@@ -3,10 +3,12 @@ import { Report, ReportPoint } from "../data";
 
 export type useState<T> = React.Dispatch<React.SetStateAction<T>>
 
-export type TagsWithReports = Map<Tag, Report[]>;
+export type Tags = Map<number, Tag>; // Tag ID -> Tag
+export type Reports = Map<number, Report[]>; // Tag ID -> Report[]
 
 export type DataStateContext = {
-    tagsWithReports: TagsWithReports;
+    tags: Tags; 
+    reports: Reports;
     refreshData: () => void;
 
     seeingReports: ReportPoint[];
