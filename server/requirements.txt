@@ -22,7 +22,7 @@ Jinja2==3.1.6
 MarkupSafe==3.0.2
 multidict==6.2.0
 propcache==0.3.0
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
 pycparser==2.22
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1

@@ -1,9 +1,24 @@
 .main {
-    height: calc(var(--vh, 1vh) * 100);
+    // height: calc(var(--vh, 1vh) * 100);
+    height: calc(100vh - 8px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .map {
-    height: 90%;
+    grid-column: span 2 / span 2;
+    grid-row: span 2 / span 2;
+}
+
+.tags {
+    grid-column-start: 3;
+}
+
+.reports {
+    grid-column-start: 3;
+    grid-row-start: 2;
 }
 
 .navbar {
