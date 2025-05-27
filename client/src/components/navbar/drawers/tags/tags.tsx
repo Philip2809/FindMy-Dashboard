@@ -17,6 +17,7 @@ import EyeIcon from '@mui/icons-material/Visibility';
 import SwipeableViews from 'react-swipeable-views';
 import { getMacAddress } from '../../../../utils/key-utils';
 import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Key, Tag } from '../../../../@types';
 import { addKey, deleteKey, getPrivateKey } from '../../../../utils/http/keys';
 
@@ -109,8 +110,8 @@ const Tags = () => {
     if (selectedTag) {
         tabs.push((
             <>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1em' }}>
-                    <Chip label={'Back'} icon={<AddIcon />} style={{ justifyItems: 'flex-start' }} onClick={() => handleOpenAddDialog()} />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1em', gap: '0.5em' }}>
+                    <Chip label={'Back'} icon={<ArrowBackIcon />} style={{ justifyItems: 'flex-start' }} onClick={() => setIndex(0)} />
                     <Chip label={'Add'} icon={<AddIcon />} onClick={() => handleOpenAddDialog()} />
                 </div>
 

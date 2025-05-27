@@ -47,7 +47,7 @@ export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
 export class DataReceiver {
     static async getLatest() {
         const tags = await getTags();
-        const response = await DataReceiver.send(getQuery(15));
+        const response = await DataReceiver.send(getQuery(30));
         const data = await response.text();
         const reports = this.parseCsv(data);
         return this.formatByTag(tags, reports);
