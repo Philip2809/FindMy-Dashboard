@@ -1,6 +1,6 @@
 .main {
     // height: calc(var(--vh, 1vh) * 100);
-    height: calc(100vh - 8px);
+    height: 100vh;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -10,15 +10,18 @@
 .map {
     grid-column: span 2 / span 2;
     grid-row: span 2 / span 2;
+    margin: 8px 0 8px 8px;
 }
 
 .tags {
     grid-column-start: 3;
+    margin: 8px 0 0 0;
 }
 
 .reports {
     grid-column-start: 3;
     grid-row-start: 2;
+    margin: 0 0 8px 0;
 }
 
 .navbar {

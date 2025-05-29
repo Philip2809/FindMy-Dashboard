@@ -33,13 +33,15 @@ function Map() {
   useEffect(() => {
     if (map.current) return; // Prevent initializing the map more than once
 
-    map.current = new maplibregl.Map({
+    const map2 = new maplibregl.Map({
       container: mapContainer.current,
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${API_KEY}`,
       center: [lng, lat],
       zoom: zoom,
       attributionControl: { compact: true },
     });
+    map.current = map2;
+
 
     map.current.on('load', () => {
       // Initialize the controller only once
@@ -72,6 +74,16 @@ function Map() {
       }
     }
   }, [context?.tags, context?.reports]); // Only re-run when the context changes
+
+  useEffect(() => {
+    if (!context.selectedReport) return;
+    context.setClickedReports([context.selectedReport]);
+
+    map.current.flyTo({
+        center: context.selectedReport.geometry.coordinates,
+        zoom: 18
+    });
+  }, [context.selectedReport]);
 
   return (
     <div ref={mapContainer} className="map">

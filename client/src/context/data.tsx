@@ -10,6 +10,7 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
     const [reports, setReports] = useState<Map<number, Report[]>>(new Map());
     const [seeingReports, setSeeingReports] = useState<ReportPoint[]>([]);
     const [clickedReports, setClickedReports] = useState<ReportPoint[]>([]);
+    const [selectedReport, setSelectedReport] = useState<ReportPoint | null>(null);
 
     const refreshData = () => {
         console.log('Refreshing data...');
@@ -29,7 +30,8 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
         <DataContext.Provider value={{ 
             tags, reports, refreshData,
             seeingReports, setSeeingReports,
-            clickedReports, setClickedReports
+            clickedReports, setClickedReports,
+            selectedReport, setSelectedReport
             }}>
             {children}
         </DataContext.Provider>

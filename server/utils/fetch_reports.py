@@ -36,7 +36,7 @@ def get_reports(keys: list[str]):
                 .field("confidence", report.confidence)
                 .field("horizontal_accuracy", report.horizontal_accuracy)
                 .field("status", report.status)
-                .field("published_at", time.mktime(report.published_at.timetuple()))
+                .field("published_at", time.mktime(report.published_at.timetuple()) * 1000)
                 .time(report.timestamp)
             )
             points.append(point)

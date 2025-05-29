@@ -18,6 +18,12 @@ export async function getPrivateKey(public_key: string) {
     return data;
 }
 
+export async function fetchReports(tagId: number) {
+    const response = await fetch(`http://localhost:5000/keys/fetch/${tagId}`);
+    const data = await response.json();
+    return data;
+}
+
 export async function deleteKey(public_key: string) {
     const response = await fetch(`http://localhost:5000/keys/${public_key}`, {
         method: 'DELETE',

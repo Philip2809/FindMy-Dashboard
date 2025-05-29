@@ -7,3 +7,7 @@ export async function getTags() {
     return data;
 }
 
+// export async function createTag(tag: Omit<Tag, 'id'>) {
+//     // const response = await fetch('http://localhost:5000/tags');
+// }
+

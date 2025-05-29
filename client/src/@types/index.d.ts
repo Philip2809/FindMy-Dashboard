@@ -16,6 +16,9 @@ export type DataStateContext = {
 
     clickedReports: ReportPoint[];
     setClickedReports: useState<ReportPoint[]>;
+
+    selectedReport: ReportPoint | null;
+    setSelectedReport: useState<ReportPoint | null>;
 };
 
 export interface Key {
