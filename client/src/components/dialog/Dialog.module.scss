@@ -1,0 +1,128 @@
+
+.dialogBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure the dialog is above other content */
+}
+
+.dialogContainer {
+    background-color: #39375B;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 50%;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+.dialogHeader {
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.dialogTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.dialogContent {
+    padding: 16px;
+    flex-grow: 1;
+}
+.dialogActions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+.dialogButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.dialogButton:hover {
+    background-color: #0056b3;
+}
+.dialogButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+
+
+
+.keyMacAddress {
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #007bff;
+}
+.keyPublicKey,
+.keyHashedPublicKey {
+    display: none; /* Initially hidden */
+    font-size: 1rem;
+    margin-top: 8px;
+}
+.keyButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.keyButton:hover {
+    background-color: #0056b3;
+}
+.keyButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+.keyMacAddress:hover + .keyPublicKey,
+.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey {
+    display: block; /* Show the public key and hashed public key on hover */
+}
+.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey + .keyButton {
+    display: block; /* Show the buttons on hover */
+}
+.keyPublicKey,
+.keyHashedPublicKey,
+.keyButton {
+    display: none; /* Ensure these are hidden initially */
+}
+.keyMacAddress:hover + .keyPublicKey,
+.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey,
+.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey + .keyButton {
+    display: block; /* Show these elements when the mac address is hovered */
+}
+.keyMacAddress {
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #007bff;
+}
+.keyPublicKey,
+.keyHashedPublicKey {
+    font-size: 1rem;
+    margin-top: 8px;
+}
+.keyButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
