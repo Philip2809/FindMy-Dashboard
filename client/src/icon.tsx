@@ -67,9 +67,9 @@ const libs: { [key: string]: any } = {
 function ReactIcon({ icon }: { icon: string }) {
     const [lib, name] = icon.split("/");
     const lib_ = libs[lib];
-    if (!lib_) throw Error(`lib ${lib} - Not found`);
+    if (!lib_) return <span>Icon library {lib} not found</span>;
     const Icon = lib_[name];
-    if (!Icon) throw Error(`Icon ${lib} ${name} - Not found`);
+    if (!Icon) return <span>Icon {name} not found in library {lib}</span>;
     return < Icon />;
 };
 

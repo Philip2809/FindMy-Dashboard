@@ -1,4 +1,3 @@
-
 .dialogBackground {
     position: fixed;
     top: 0;
@@ -9,120 +8,162 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure the dialog is above other content */
+    z-index: 1000;
 }
 
 .dialogContainer {
     background-color: #39375B;
-    border-radius: 8px;
+    border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 50%;
     max-width: 90%;
     display: flex;
     flex-direction: column;
+    max-height: 80%;
+
+    .dialogHeader {
+        padding: 16px;
+        border-bottom: 1px solid white;
+    }
+
+    .dialogTitle {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .closeBtn {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                color: tomato;
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    .dialogContent {
+        padding: 16px;
+        flex-grow: 1;
+        font-size: 16px;
+        overflow: auto;
+    }
+
+    .dialogActions {
+        display: flex;
+        justify-content: flex-end;
+        padding: 16px;
+        border-top: 1px solid white;
+
+        .dialogButton {
+            background-color: #0A2342;
+            color: white;
+            font-size: 1rem;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            padding: 8px 16px;
+            margin-left: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #39375B;
+                border-color: #0A2342;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
 }
-.dialogHeader {
-    padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
-}
-.dialogTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-.dialogContent {
-    padding: 16px;
-    flex-grow: 1;
-}
-.dialogActions {
+
+.keysActions {
     display: flex;
-    justify-content: flex-end;
-    padding: 16px;
-    border-top: 1px solid #e0e0e0;
-}
-.dialogButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    margin-left: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.dialogButton:hover {
-    background-color: #0056b3;
-}
-.dialogButton:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+    justify-content: space-between;
+    padding-bottom: 8px;
+    font-size: x-large;
+
+    .addKeyBtn {
+        cursor: pointer;
+
+        &:hover {
+            color: greenyellow;
+            transform: scale(1.1);
+        }
+    }
 }
 
-
-
-.keyMacAddress {
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: #007bff;
-}
-.keyPublicKey,
-.keyHashedPublicKey {
-    display: none; /* Initially hidden */
-    font-size: 1rem;
-    margin-top: 8px;
-}
-.keyButton {
-    background-color: #007bff;
+.addKeyInput {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background-color: #0A2342;
     color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    margin-top: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin: 8px 0;
+
+    &:focus {
+        outline: none;
+        border-color: #0A2342;
+        background-color: #39375B;
+    }
 }
-.keyButton:hover {
-    background-color: #0056b3;
-}
-.keyButton:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
-}
-.keyMacAddress:hover + .keyPublicKey,
-.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey {
-    display: block; /* Show the public key and hashed public key on hover */
-}
-.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey + .keyButton {
-    display: block; /* Show the buttons on hover */
-}
-.keyPublicKey,
-.keyHashedPublicKey,
-.keyButton {
-    display: none; /* Ensure these are hidden initially */
-}
-.keyMacAddress:hover + .keyPublicKey,
-.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey,
-.keyMacAddress:hover + .keyPublicKey + .keyHashedPublicKey + .keyButton {
-    display: block; /* Show these elements when the mac address is hovered */
-}
-.keyMacAddress {
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: #007bff;
-}
-.keyPublicKey,
-.keyHashedPublicKey {
-    font-size: 1rem;
-    margin-top: 8px;
-}
-.keyButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    margin-top: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+.keys {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .key {
+        display: flex;
+        padding: 8px;
+        background-color: #0A2342;
+        border-radius: 5px;
+        color: white;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .keyDetails {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .keyActions {
+            display: flex;
+            gap: 8px;
+            font-size: x-large;
+
+            .keyButton {
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+
+                &#trash {
+                    color: tomato;
+
+                    &:hover {
+                        color: red;
+                        transform: scale(1.1);
+                    }
+                }
+
+                &#key {
+                    color: greenyellow;
+
+                    &:hover {
+                        color: green;
+                        transform: scale(1.1);
+                    }
+                }
+            }
+        }
+
+    }
 }

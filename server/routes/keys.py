@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import urllib
 from models.key import Key
 from db import db
 from models.tag import Tag
@@ -41,26 +42,30 @@ def create_key():
     return jsonify(key.to_dict()), 201
 
 
-# Get all keys
+# Get all keys OR get a specific key by public_key
 @keys_blueprint.route('/', methods=['GET'])
 def get_keys():
+    public_key = request.args.get('publicKey')
+
+    # If a public_key is provided, return the specific key's private key
+    if public_key:
+        key: Key = Key.query.get(public_key)
+        if not key:
+            return jsonify({'error': 'Key not found'}), 404
+        return jsonify(key.get_private_key()), 200
+
+    # If no public_key is provided, return all keys
     keys = Key.query.all()
     return jsonify([key.to_dict() for key in keys]), 200
 
 
-# Get specific key by public_key
-@keys_blueprint.route('/<path:public_key>', methods=['GET'])
-def get_key(public_key):
-    key: Key = Key.query.get(public_key)
-    if not key:
-        return jsonify({'error': 'Key not found'}), 404
-    return jsonify(key.get_private_key()), 200
-
-
 # Delete a key by private_key
-@keys_blueprint.route('/<path:public_key>', methods=['DELETE'])
-def delete_key(public_key):
-    key = Key.query.get(public_key)
+@keys_blueprint.route('/', methods=['DELETE'])
+def delete_key():
+    public_key = request.args.get('publicKey')
+    print(public_key)
+    key = (Key.query.get(public_key))
+
 
     if not key:
         return jsonify({'error': 'Key not found'}), 404
@@ -81,7 +86,7 @@ def fetch_all_reports():
 
 # Refresh reports by tag
 @keys_blueprint.route('/fetch', methods=['POST'])
-@keys_blueprint.route('/fetch/<int:tag_id>', methods=['GET'])
+@keys_blueprint.route('/fetch/<string:tag_id>', methods=['GET'])
 def fetch_reports(tag_id=None):
     keys: list[Key] = []
 

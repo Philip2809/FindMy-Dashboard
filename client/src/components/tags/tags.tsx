@@ -17,7 +17,7 @@ import { formatTime } from '../../utils';
 import { getMacAddress } from '../../utils/key-utils';
 import { FaInfoCircle, FaPlus, FaSync } from 'react-icons/fa';
 import { fetchReports } from '../../utils/http/keys';
-import { Dialog, TagDialog } from '../dialog/Dialog';
+import { Dialog, TagDialog, TagEditDialog } from '../dialog/Dialog';
 import { Tag } from '../../@types';
 const Conf_Colors: { [key: number]: string } = {
     1: 'red',
@@ -28,22 +28,22 @@ const Conf_Colors: { [key: number]: string } = {
 const Tags = () => {
     const context = useContext(DataContext);
     if (!context) return null;
-    const disabledTags = new Set<number>();
 
     const tags = Array.from(context?.tags.values());
 
-    const [selectedTag, setSelectedTag] = useState<Tag>();
+    const [selectedTagId, setSelectedTagId] = useState<string>();
+    const [newTagDialogOpen, setNewTagDialogOpen] = useState(false);
 
     return (
         <>
-            { selectedTag && <TagDialog tag={selectedTag} onClose={ () => setSelectedTag(undefined) } /> }
+            { selectedTagId && <TagDialog tag={context.tags.get(selectedTagId)} onClose={ () => setSelectedTagId(undefined) } /> }
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>
                         <span>Tags</span>
                     </div>
                     <div>
-                        <FaPlus />
+                        <FaPlus className={sharedStyles.listActionButton} onClick={() => setNewTagDialogOpen(true) } />
                     </div>
                 </div>
                 <div style={{ flexGrow: 1 }}>
@@ -69,28 +69,31 @@ const Tags = () => {
                                                 if (!latestReport) return;
                                                 context.setSelectedReport(reportsToGeoJSON(tag, [latestReport])[0]);
                                             }}>
-                                                <div className={sharedStyles.icon} style={{ color: tag.color }} onClick={() => {
-                                                    if (disabledTags.has(tag.id)) disabledTags.delete(tag.id);
-                                                    else disabledTags.add(tag.id);
-
-                                                    console.log(disabledTags);
+                                                <div className={sharedStyles.icon} style={{ color: tag.color, opacity: context.disabledTags.has(tag.id) ? 0.2 : 1 }} onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    context.toggleTag(tag.id);
                                                 }}>
                                                     <ReactIcon icon={tag.icon} />
                                                 </div>
                                                 <div className={sharedStyles.name}>
-                                                    {tag.name}
+                                                    <span>{tag.name}</span>
+                                                    <span className={styles.tagLabel}> {tag.label}</span>
                                                 </div>
                                                 <div className={sharedStyles.details}>
-                                                    {latestReport ? formatTime(latestReport.timestamp) : 'No reports in view'}
+                                                    {latestReport ? formatTime(latestReport.timestamp) : 'No reports in timeframe'}
                                                 </div>
                                                 <div className={sharedStyles.actions}>
                                                     <FaSync className={sharedStyles.btn} onClick={((e) => {
                                                         e.stopPropagation();
-                                                        fetchReports(tag.id);
+                                                        const loadingId = context.addLoading(`Fetching reports for tag ${tag.name}`);
+                                                        fetchReports(tag.id).then(() => {
+                                                            context.removeLoading(loadingId);
+                                                            context.refreshData();
+                                                        })
                                                     })} />
                                                     <FaInfoCircle className={sharedStyles.btn} onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSelectedTag(tag);
+                                                        setSelectedTagId(tag.id);
                                                     }} />
                                                 </div>
                                             </div>
@@ -102,6 +105,9 @@ const Tags = () => {
                     </AutoSizer>
                 </div>
             </div>
+
+
+            { newTagDialogOpen && <TagEditDialog onClose={() => setNewTagDialogOpen(false)} /> }
         </>
     )
 

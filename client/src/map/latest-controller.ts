@@ -38,7 +38,7 @@ export class LatestController {
     }
 
     filter(confidence: number, enabled: boolean) {
-        this.latestLayer?.filter(confidence, enabled);
+        this.latestLayer?.confidenceFilter(confidence, enabled);
         this.map?.once('idle', this.refreshSeeingReports.bind(this));
     }
 

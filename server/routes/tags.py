@@ -11,11 +11,30 @@ tags_blueprint = Blueprint('tags', __name__)
 @tags_blueprint.route('/', methods=['POST'])
 def create_tag():
     data = request.get_json()
+    id = data.get('id')
     icon = data.get('icon')
     name = data.get('name')
+    label = data.get('label')
     color = data.get('color')
+
+    if not icon or not name or not label or not color:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    if id:
+        existing_tag = Tag.query.get(id)
+        if not existing_tag:
+            return jsonify({'error': 'Tag not found'}), 404
+        # Update existing tag
+        existing_tag.icon = icon
+        existing_tag.name = name
+        existing_tag.label = label
+        existing_tag.color = color
+        db.session.commit()
+
+        return jsonify(existing_tag.to_dict()), 200
+        
     
-    tag = Tag(icon=icon, name=name, color=color)
+    tag = Tag(icon=icon, name=name, label=label, color=color)
     db.session.add(tag)
     db.session.commit()
     
@@ -33,28 +52,8 @@ def get_tags():
     } for tag in tags]), 200
 
 
-# Update a tag by ID
-@tags_blueprint.route('/<int:id>', methods=['PUT'])
-def update_tag(id):
-    data = request.get_json()
-    icon = data.get('icon')
-    name = data.get('name')
-    color = data.get('color')
-    
-    tag = Tag.query.get(id)
-    if not tag:
-        return jsonify({'error': 'Tag not found'}), 404
-    
-    tag.icon = icon
-    tag.name = name
-    tag.color = color
-    db.session.commit()
-    
-    return jsonify(tag.to_dict()), 200
-
-
 # Delete a tag by ID
-@tags_blueprint.route('/<int:id>', methods=['DELETE'])
+@tags_blueprint.route('/<string:id>', methods=['DELETE'])
 def delete_tag(id):
     tag = Tag.query.get(id)
     if not tag:

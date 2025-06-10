@@ -19,6 +19,9 @@
 
     .name {
         grid-column: span 3 / span 3;
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     .details {
@@ -33,9 +36,22 @@
         display: flex;
         justify-content: space-evenly;
         align-items: center;
+        font-size: x-large;
 
         .btn {
             cursor: pointer;
         }
+    }
+}
+
+.listActionButton {
+    margin-right: 8px;
+    font-size: x-large;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        color: #0A2342;
+        transform: scale(1.5);
     }
 }

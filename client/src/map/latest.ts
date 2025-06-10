@@ -3,6 +3,20 @@ import { reportsToGeoJSON } from "../data";
 import { Reports, Tags } from "../@types";
 import { LatestMapLayers } from "./enums";
 
+type DEFAULT_FILTER = [
+    'case',
+    ['in', ['get', 'tagId'], string], false,
+    ['in', ['get', 'confidence'], string], false,
+    true
+];
+
+const DEFAULT_FILTER: DEFAULT_FILTER = [
+    'case',
+    ['in', ['get', 'tagId'], ''], false,
+    ['in', ['get', 'confidence'], ''], false,
+    true
+];
+
 export class LatestLayer {
     constructor(
         public map: maplibregl.Map,
@@ -41,17 +55,35 @@ export class LatestLayer {
         (this.map.getSource('line') as any).setData(allPoints);
     }
 
-    filter(confidence: number, enabled: boolean) {
-        const filter = this.map.getFilter(LatestMapLayers.main);
+
+
+// [
+//     'case',                                      // 0
+//     ['in', ['get', 'tagId'], ''], false,         // 1, 2
+//     ['in', ['get', 'confidence'], '' // 2], false,    // 3, 4
+//     true
+// ]
+    confidenceFilter(confidence: number, enabled: boolean) {
+        const filter = this.map.getFilter(LatestMapLayers.main) as DEFAULT_FILTER;
         if (!Array.isArray(filter)) return;
-        const string = filter[2] as string;
-        if (string.includes(confidence.toString())) {
-            if (enabled) return;
-            else filter[2] = string.replace(confidence.toString(), '');
-        } else {
-            if (enabled) filter[2] = string + confidence;
-            else return;
-        }
+        let confidenceString = filter[3][2];
+        if (confidenceString.includes(confidence.toString()) && !enabled) 
+            filter[3][2] = confidenceString.replace(confidence.toString(), '');
+        else if (enabled)
+            filter[3][2] = `${confidenceString}${confidence}`;
+
+        this.map.setFilter(LatestMapLayers.main, filter);
+        this.map.setFilter(LatestMapLayers.confidence, filter);
+    }
+
+    tagFilter(disabledTags: Set<string>) {
+        const filter = this.map.getFilter(LatestMapLayers.main) as DEFAULT_FILTER;
+        if (!Array.isArray(filter)) return;
+        let disabledTagsString = '';
+        disabledTags.forEach((tagId) => {
+            disabledTagsString += `${tagId},`;
+        });
+        filter[1][2] = disabledTagsString.slice(0, -1); // Remove the last comma
 
         this.map.setFilter(LatestMapLayers.main, filter);
         this.map.setFilter(LatestMapLayers.confidence, filter);
@@ -95,7 +127,7 @@ export class LatestLayer {
             id: LatestMapLayers.main,
             type: 'circle',
             source: LatestMapLayers.main,
-            filter: ['in', ['get', 'confidence'], '123'],
+            filter: DEFAULT_FILTER,
             paint: {
                 "circle-radius": 12,
                 "circle-color": ["get", "color"],
@@ -115,7 +147,7 @@ export class LatestLayer {
             id: LatestMapLayers.confidence,
             type: 'circle',
             source: LatestMapLayers.main,
-            filter: ['in', ['get', 'confidence'], '123'],
+            filter: DEFAULT_FILTER,
             paint: {
                 "circle-radius": 6,
 

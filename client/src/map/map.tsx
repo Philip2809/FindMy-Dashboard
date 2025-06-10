@@ -15,12 +15,15 @@ const makeSx = (color: string) => ({
 })
 
 let firstWithData = true;
+let requestTimeout: number;
 
 function Map() {
   const context = useContext(DataContext);
   if (!context) return null;
   const mapContainer = useRef(null) as any;
   const map = useRef(null) as any;
+  const timeRangeRef = useRef<HTMLInputElement>(null);
+  const reportsPerTagRef = useRef<HTMLInputElement>(null);
 
   // Use useRef to store the controller instance, so it's only created once
   const controller = useRef<LatestController>(new LatestController(context.setClickedReports, context.setSeeingReports));
@@ -80,19 +83,60 @@ function Map() {
     context.setClickedReports([context.selectedReport]);
 
     map.current.flyTo({
-        center: context.selectedReport.geometry.coordinates,
-        zoom: 18
+      center: context.selectedReport.geometry.coordinates,
+      zoom: 18
     });
+
+    controller.current.accuracyCircle?.setAccuracy(
+      context.selectedReport.geometry.coordinates,
+      context.selectedReport.properties.horizontal_accuracy
+    );
   }, [context.selectedReport]);
+
+  useEffect(() => {
+    controller.current.latestLayer?.tagFilter(context.disabledTags);
+  }, [context.disabledTags]);
+
+  const onRangeChange = () => {
+    console.log('Range changed');
+    if (!timeRangeRef.current || !reportsPerTagRef.current) return;
+    clearTimeout(requestTimeout);
+    console.log('Time range:', timeRangeRef.current.value);
+    console.log('Reports per tag:', reportsPerTagRef.current.value);
+
+    const timeRange = timeRangeRef.current.value || '';
+    if (/[smhdwy]$/.test(timeRange)) context.setTimeRange(timeRange);
+
+    const reportsPerTag = reportsPerTagRef.current.value || undefined;
+    if (!isNaN(Number(reportsPerTag))) context.setReportsPerTag(Number(reportsPerTag));
+    // timeRange = timeRangeRef.current.value;
+
+    requestTimeout = setTimeout(() => {
+      context.refreshData();
+      console.warn('Requesting latest data with range:', timeRange, 'and reports per tag:', reportsPerTag);
+    }, 800);
+
+  }
 
   return (
     <div ref={mapContainer} className="map">
-      <div className="popup filter-types">
-        <Checkbox defaultChecked sx={makeSx('red')} onChange={(event) => controller.current.filter(1, event.target.checked)} />
-        <Checkbox defaultChecked sx={makeSx('yellow')} onChange={(event) => controller.current.filter(2, event.target.checked)} />
-        <Checkbox defaultChecked sx={makeSx('lightgreen')} onChange={(event) => controller.current.filter(3, event.target.checked)} />
+      <div className="popup-container">
+        <div className="popup">
+          <Checkbox defaultChecked sx={makeSx('red')} onChange={(event) => controller.current.filter(1, !event.target.checked)} />
+          <Checkbox defaultChecked sx={makeSx('yellow')} onChange={(event) => controller.current.filter(2, !event.target.checked)} />
+          <Checkbox defaultChecked sx={makeSx('lightgreen')} onChange={(event) => controller.current.filter(3, !event.target.checked)} />
+        </div>
+
+        <div className="popup rangeSelector">
+          {context.timeRange}
+{context.reportsPerTag}
+          <input type="text" className="input" ref={timeRangeRef} onChange={onRangeChange} title="Time range" />
+          <input type="text" className="input" ref={reportsPerTagRef} onChange={onRangeChange} title="Reports per tag" />
+        </div>
       </div>
     </div>
+
+
   );
 }
 

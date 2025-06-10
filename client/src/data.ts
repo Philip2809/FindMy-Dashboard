@@ -1,10 +1,10 @@
 import { Tag } from "./@types";
 import { getTags } from "./utils/http/tags";
 
-function getQuery(latest?: number) {
+function getQuery(timeRange: string, latest?: number) {
     return `
     from(bucket: "${import.meta.env.VITE_INFLUXDB_BUCKET}")
-        |> range(start: -24h)
+        |> range(start: -${timeRange})
         ${latest ? `|> tail(n: ${latest})` : ""}
         |> keep(columns: ["_time", "_field", "_value", "_measurement"])
         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
@@ -25,7 +25,7 @@ export interface Report {
     status: number;
 }
 
-export type ReportPointProperties = Report & { color: string, index: number, tagId: number };
+export type ReportPointProperties = Report & { color: string, index: number, tagId: string };
 export type ReportPoint = GeoJSON.Feature<GeoJSON.Point, ReportPointProperties>;
 
 export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
@@ -45,9 +45,9 @@ export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
 }
 
 export class DataReceiver {
-    static async getLatest() {
+    static async getLatest(timeRange: string, reportsPerTag: number) {
         const tags = await getTags();
-        const response = await DataReceiver.send(getQuery(30));
+        const response = await DataReceiver.send(getQuery(timeRange, reportsPerTag));
         const data = await response.text();
         const reports = this.parseCsv(data);
         return this.formatByTag(tags, reports);
