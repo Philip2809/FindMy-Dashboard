@@ -43,7 +43,12 @@ export class LatestController {
     }
 
     refreshSeeingReports() {
-        const features = this.map?.queryRenderedFeatures({ layers: [LatestMapLayers.main] }) as unknown as ReportPoint[] || [];
+        const features = this.map?.queryRenderedFeatures({ layers: [LatestMapLayers.main, LatestMapLayers.mainLowDetail] }) as unknown as ReportPoint[] || [];
+        
+        console.log(features.length, 'points');
+        if (features.length < 500) this.latestLayer?.setDetailLevel(false);
+        else this.latestLayer?.setDetailLevel(true);
+
         // MAX 500 reports to show, if the users want to view so many reports at once (why?) they can click on the reports they want more info about
         if (features.length > 500) {
             this.setSeeingReports([]);

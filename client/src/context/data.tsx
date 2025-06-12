@@ -46,7 +46,7 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
 
     useEffect(() => {
         refreshData();
-    }, []);
+    }, [timeRange, reportsPerTag]);
 
     return (
         <DataContext.Provider value={{

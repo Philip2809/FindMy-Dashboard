@@ -193,7 +193,6 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
 }
 
 export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void }) => {
-
     const context = useContext(DataContext);
     if (!context) return null;
 
@@ -201,6 +200,14 @@ export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void
     const keyLabelRef = useRef<HTMLInputElement>(null);
     const keyIconRef = useRef<HTMLInputElement>(null);
     const keyColorRef = useRef<HTMLInputElement>(null);
+
+    const [icon, setIcon] = useState<string>(tag?.icon || '');
+    const [color, setColor] = useState<string>(tag?.color || '');
+
+    const inputChange = () => {
+        setIcon(keyIconRef.current?.value || '');
+        setColor(keyColorRef.current?.value || '');
+    };
 
     return (
         <Dialog title={tag ? 'Edit tag' : 'Add tag'} onClose={onClose} actions={[
@@ -223,10 +230,16 @@ export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void
             },
             { label: 'Cancel', onClick: onClose }
         ]}>
-            <input type='text' placeholder='Name' defaultValue={tag?.name} ref={keyNameRef} className={styles.addKeyInput} />
-            <input type='text' placeholder='Label' defaultValue={tag?.label} ref={keyLabelRef} className={styles.addKeyInput} />
-            <input type='text' placeholder='Icon' defaultValue={tag?.icon} ref={keyIconRef} className={styles.addKeyInput} />
-            <input type='text' placeholder='Color' defaultValue={tag?.color} ref={keyColorRef} className={styles.addKeyInput} />
+            <span>Name</span>
+            <input type='text' placeholder='Name' defaultValue={tag?.name} ref={keyNameRef} onChange={inputChange} className={styles.addKeyInput} />
+            <span>Label</span>
+            <input type='text' placeholder='Label' defaultValue={tag?.label} ref={keyLabelRef} onChange={inputChange} className={styles.addKeyInput} />
+            <span>Icon <a style={{ color: 'white' }} href="https://react-icons.github.io/react-icons/" target="_blank" rel="noopener noreferrer">(any react icon)</a></span>
+            <div className={styles.addTagIconPreviewInput}>
+                <span className={styles.addTagIconPreview} style={{ color: color }}><ReactIcon icon={icon} /></span>
+                <input type='text' placeholder='React icon (fa/FaTag)' defaultValue={tag?.icon} ref={keyIconRef} onChange={inputChange} className={styles.addKeyInput} />
+                <input type='text' placeholder='Icon color (any css color)' defaultValue={tag?.color} ref={keyColorRef} onChange={inputChange} className={styles.addKeyInput} />
+            </div>
         </Dialog>
     )
 }

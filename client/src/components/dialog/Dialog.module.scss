@@ -115,6 +115,19 @@
     }
 }
 
+.addTagIconPreviewInput {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    .addTagIconPreview {
+        display: flex;
+        font-size: xx-large;
+    }
+}
+
+
+
 .keys {
     display: flex;
     flex-direction: column;

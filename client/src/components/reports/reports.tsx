@@ -67,7 +67,7 @@ const Reports = () => {
                                                     {formatTime(report.properties.timestamp)} - {formatTime(report.properties.published_at)}
                                                 </div>
                                                 <div className={sharedStyles.actions}>
-                                                    <FaInfoCircle className={sharedStyles.btn} onClick={(e) => {
+                                                    <FaInfoCircle style={{ color: Conf_Colors[report.properties.confidence] }} className={sharedStyles.btn} onClick={(e) => {
                                                         e.stopPropagation();
                                                         setSelectedReportDialog(report);
                                                     }} />

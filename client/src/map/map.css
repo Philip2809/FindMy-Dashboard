@@ -17,6 +17,20 @@
   border-radius: 5px;
 }
 
+.showReports {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    padding: 0 10px;
+
+
+  input {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+}
+
 .rangeSelector {
   display: flex;
   align-items: center;

@@ -25,7 +25,7 @@ export interface Report {
     status: number;
 }
 
-export type ReportPointProperties = Report & { color: string, index: number, tagId: string };
+export type ReportPointProperties = Report & { color: string, icon: string, index: number, tagId: string };
 export type ReportPoint = GeoJSON.Feature<GeoJSON.Point, ReportPointProperties>;
 
 export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
@@ -37,6 +37,7 @@ export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
         },
         properties: {
             ...report,
+            icon: tag.icon,
             color: tag.color,
             tagId: tag.id,
             index

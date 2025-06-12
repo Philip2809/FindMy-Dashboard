@@ -31,46 +31,77 @@ import * as vsc from "react-icons/vsc"
 import * as wi from "react-icons/wi"
 
 const libs: { [key: string]: any } = {
-    "ai":ai,
-    "bi":bi,
-    "bs":bs,
-    "cg":cg,
-    "ci":ci,
-    "di":di,
-    "fa":fa,
-    "fa6":fa6,
-    "fc":fc,
-    "fi":fi,
-    "gi":gi,
-    "go":go,
-    "gr":gr,
-    "hi":hi,
-    "hi2":hi2,
-    "im":im,
-    "io":io,
-    "io5":io5,
-    "lia":lia,
-    "lu":lu,
-    "md":md,
-    "pi":pi,
-    "ri":ri,
-    "rx":rx,
-    "si":si,
-    "sl":sl,
-    "tb":tb,
-    "tfi":tfi,
-    "ti":ti,
-    "vsc":vsc,
-    "wi":wi,
+  "ai": ai,
+  "bi": bi,
+  "bs": bs,
+  "cg": cg,
+  "ci": ci,
+  "di": di,
+  "fa": fa,
+  "fa6": fa6,
+  "fc": fc,
+  "fi": fi,
+  "gi": gi,
+  "go": go,
+  "gr": gr,
+  "hi": hi,
+  "hi2": hi2,
+  "im": im,
+  "io": io,
+  "io5": io5,
+  "lia": lia,
+  "lu": lu,
+  "md": md,
+  "pi": pi,
+  "ri": ri,
+  "rx": rx,
+  "si": si,
+  "sl": sl,
+  "tb": tb,
+  "tfi": tfi,
+  "ti": ti,
+  "vsc": vsc,
+  "wi": wi,
 };
 
 function ReactIcon({ icon }: { icon: string }) {
-    const [lib, name] = icon.split("/");
-    const lib_ = libs[lib];
-    if (!lib_) return <span>Icon library {lib} not found</span>;
-    const Icon = lib_[name];
-    if (!Icon) return <span>Icon {name} not found in library {lib}</span>;
-    return < Icon />;
+  const [lib, name] = icon.split("/");
+  const lib_ = libs[lib];
+  if (!lib_) return <fa.FaTag />;
+  const Icon = lib_[name];
+  if (!Icon) return <fa.FaTag />;
+  return < Icon />;
 };
 
 export default ReactIcon;
+
+
+import ReactDOM from "react-dom/client";
+import * as htmlToImage from "html-to-image";
+
+
+export async function renderReactElementToImage(reactElement: React.ReactNode) {
+  // Create an off-screen container
+  const container = document.createElement("div");
+  container.style.color = 'black';
+  container.style.fontSize = '30px';
+  container.style.width = 'fit-content';
+  container.style.display = 'flex';
+  container.style.pointerEvents = "none";
+  document.body.appendChild(container);
+
+  // Render the React component
+  const root = ReactDOM.createRoot(container);
+  root.render(reactElement);
+
+  // Wait a tick for rendering to complete
+  await new Promise((resolve) => setTimeout(resolve, 50));
+
+  // Convert to image
+  const data = await htmlToImage.toPixelData(container);
+
+  // Clean up
+  root.unmount();
+  container.remove();
+  return data;
+}
