@@ -16,9 +16,11 @@ import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
 import { getMacAddress } from '../../utils/key-utils';
 import { FaInfoCircle, FaPlus, FaSync } from 'react-icons/fa';
-import { fetchReports } from '../../utils/http/keys';
 import { Dialog, TagDialog, TagEditDialog } from '../dialog/Dialog';
 import { Tag } from '../../@types';
+import { TbAuth2Fa } from 'react-icons/tb';
+import { login } from '../../network/auth';
+import { downloadReports } from '../../network/keys';
 const Conf_Colors: { [key: number]: string } = {
     1: 'red',
     2: 'yellow',
@@ -43,6 +45,7 @@ const Tags = () => {
                         <span>Tags</span>
                     </div>
                     <div>
+                        <TbAuth2Fa className={sharedStyles.listActionButton} onClick={() => login() } />
                         <FaPlus className={sharedStyles.listActionButton} onClick={() => setNewTagDialogOpen(true) } />
                     </div>
                 </div>
@@ -85,11 +88,7 @@ const Tags = () => {
                                                 <div className={sharedStyles.actions}>
                                                     <FaSync className={sharedStyles.btn} onClick={((e) => {
                                                         e.stopPropagation();
-                                                        const loadingId = context.addLoading(`Fetching reports for tag ${tag.name}`);
-                                                        fetchReports(tag.id).then(() => {
-                                                            context.removeLoading(loadingId);
-                                                            context.refreshData();
-                                                        })
+                                                        downloadReports(tag.id, `Fetching reports for tag ${tag.name}`).then(() => context.refreshData())
                                                     })} />
                                                     <FaInfoCircle className={sharedStyles.btn} onClick={(e) => {
                                                         e.stopPropagation();

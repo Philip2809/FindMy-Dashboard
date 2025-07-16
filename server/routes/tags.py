@@ -3,6 +3,8 @@ from models.tag import Tag
 from models.key import Key
 from db import db
 
+from utils.login import Pick2FAMethod, ShowMessage
+
 tags_blueprint = Blueprint('tags', __name__)
 
 # CRUD Operations for Tags
@@ -45,6 +47,10 @@ def create_tag():
 @tags_blueprint.route('/', methods=['GET'])
 def get_tags():
     tags = Tag.query.all()
+
+
+    # return Pick2FAMethod(["trusted", "sms"]).to_json()
+    # return ShowMessage("2FA process not initiated or already completed.", 400).to_json()
 
     return jsonify([{
         **tag.to_dict(),

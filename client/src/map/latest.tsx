@@ -51,9 +51,9 @@ export class LatestLayer {
 
             if (this.map.hasImage(tag.icon) || loadingImages.has(tag.icon)) return;
             loadingImages.add(tag.icon);
-            renderReactElementToImage(<ReactIcon icon={tag.icon} />).then((icon) => {
+            renderReactElementToImage(<ReactIcon icon={tag.icon} size={32} />).then((icon) => {
                 if (!icon) return;
-                this.map.addImage(tag.icon, { data: icon, width: 30, height: 30 }, { sdf: true });
+                this.map.addImage(tag.icon, icon, { sdf: true });
                 loadingImages.delete(tag.icon);
             });
         });

@@ -7,6 +7,7 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from routes.tags import tags_blueprint
 from routes.keys import keys_blueprint
+from routes.login import login_blueprint
 from sqlalchemy import inspect  # Import the inspect function from SQLAlchemy
 import config
 from db import db  # Import db from the new db.py
@@ -31,6 +32,7 @@ db.init_app(app)  # Initialize the db with the app
 # Register blueprints (routes)
 app.register_blueprint(tags_blueprint, url_prefix='/tags')
 app.register_blueprint(keys_blueprint, url_prefix='/keys')
+app.register_blueprint(login_blueprint, url_prefix='/login')
 
 # Run the app
 if __name__ == '__main__':

@@ -64,7 +64,7 @@ const Reports = () => {
                                                     {tag.name}
                                                 </div>
                                                 <div className={sharedStyles.details}>
-                                                    {formatTime(report.properties.timestamp)} - {formatTime(report.properties.published_at)}
+                                                    {formatTime(report.properties.timestamp)}
                                                 </div>
                                                 <div className={sharedStyles.actions}>
                                                     <FaInfoCircle style={{ color: Conf_Colors[report.properties.confidence] }} className={sharedStyles.btn} onClick={(e) => {

@@ -1,5 +1,6 @@
 import { Tag } from "./@types";
-import { getTags } from "./utils/http/tags";
+import { getReports } from "./network/keys";
+import { getTags } from "./network/tags";
 
 function getQuery(timeRange: string, latest?: number) {
     return `
@@ -48,8 +49,7 @@ export function reportsToGeoJSON(tag: Tag, reports: Report[]): ReportPoint[] {
 export class DataReceiver {
     static async getLatest(timeRange: string, reportsPerTag: number) {
         const tags = await getTags();
-        const response = await DataReceiver.send(getQuery(timeRange, reportsPerTag));
-        const data = await response.text();
+        const data = await getReports(getQuery(timeRange, reportsPerTag));
         const reports = this.parseCsv(data);
         return this.formatByTag(tags, reports);
     }
@@ -85,22 +85,6 @@ export class DataReceiver {
             result.push(obj);
         }
         return result;
-    }
-
-
-    static send(query: string) {
-        // TODO: clean this up...
-        return fetch(import.meta.env.VITE_INFLUXDB_URL + "/api/v2/query?org=" + import.meta.env.VITE_INFLUXDB_ORG, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Token " + import.meta.env.VITE_INFLUXDB_TOKEN,
-            },
-            body: JSON.stringify({
-                query,
-                type: "flux",
-            })
-        });
     }
 }
 

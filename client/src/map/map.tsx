@@ -6,6 +6,8 @@ import { Checkbox } from "@mui/material";
 import DataContext from "../context/data";
 import { LatestController } from "./latest-controller";
 import { useState } from "../@types";
+import { FaList } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 
 
 const makeSx = (color: string) => ({
@@ -112,7 +114,8 @@ function Map({ setDisplayReports }: { setDisplayReports: useState<boolean> }) {
       <div className="popup-container">
 
         <div className="popup showReports">
-          <input type="checkbox" onClick={() => setDisplayReports(e => !e)} />
+          <FaList size={32} onClick={() => setDisplayReports(true)} />
+          <FaXmark size={32} onClick={() => setDisplayReports(false)} />
         </div>
 
         <div className="popup">

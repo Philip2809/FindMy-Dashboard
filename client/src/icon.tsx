@@ -64,44 +64,51 @@ const libs: { [key: string]: any } = {
   "wi": wi,
 };
 
-function ReactIcon({ icon }: { icon: string }) {
+function ReactIcon({ icon, size }: { icon: string, size?: number }) {
   const [lib, name] = icon.split("/");
   const lib_ = libs[lib];
-  if (!lib_) return <fa.FaTag />;
+  if (!lib_) return <fa.FaTag size={size} />;
   const Icon = lib_[name];
-  if (!Icon) return <fa.FaTag />;
-  return < Icon />;
+  if (!Icon) return <fa.FaTag size={size} />;
+  return <Icon size={size} />;
 };
 
 export default ReactIcon;
 
 
 import ReactDOM from "react-dom/client";
-import * as htmlToImage from "html-to-image";
+import { useEffect } from "react";
 
 
-export async function renderReactElementToImage(reactElement: React.ReactNode) {
-  // Create an off-screen container
+function IconWrapper({ children, onRendered }: { children: React.ReactNode; onRendered: () => void }) {
+  useEffect(() => {
+    onRendered();
+  }, []);
+
+  return children;
+}
+
+export async function renderReactElementToImage(icon: React.ReactNode) {
   const container = document.createElement("div");
-  container.style.color = 'black';
-  container.style.fontSize = '30px';
-  container.style.width = 'fit-content';
-  container.style.display = 'flex';
-  container.style.pointerEvents = "none";
-  document.body.appendChild(container);
-
-  // Render the React component
   const root = ReactDOM.createRoot(container);
-  root.render(reactElement);
 
-  // Wait a tick for rendering to complete
-  await new Promise((resolve) => setTimeout(resolve, 50));
+  await new Promise<void>((resolve) => {
+    root.render(<IconWrapper onRendered={resolve}> {icon} </IconWrapper>);
+  });
 
-  // Convert to image
-  const data = await htmlToImage.toPixelData(container);
+  const svgData = container.innerHTML;
+
+  const img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + svgData;
+
+  // await image load
+  await new Promise((resolve) => {
+    img.onload = resolve;
+    img.onerror = resolve; // resolve on error to avoid hanging
+  });
 
   // Clean up
   root.unmount();
   container.remove();
-  return data;
+  return img;
 }

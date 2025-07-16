@@ -6,9 +6,9 @@ import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
 import { FaKey, FaPlus, FaTrash } from 'react-icons/fa';
 import { useContext, useRef, useState } from 'react';
-import { addKey, deleteKey, getPrivateKey } from '../../utils/http/keys';
 import DataContext from '../../context/data';
-import { addOrUpdateTag, deleteTag } from '../../utils/http/tags';
+import { deleteKey, getPrivateKey, addKey } from '../../network/keys';
+import { deleteTag, addOrUpdateTag } from '../../network/tags';
 
 
 interface DialogProps {
@@ -116,9 +116,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 {
                     label: 'Remove',
                     onClick: () => {
-                        const loadingId = context.addLoading(`Removing key from tag "${tag.name}"`);
-                        deleteKey(removeKeyDialog).then(() => {
-                            context.removeLoading(loadingId);
+                        deleteKey(removeKeyDialog, `Removing key from tag "${tag.name}"`).then(() => {
                             context.refreshData();
                             setRemoveKeyDialog(undefined);
                         });
@@ -135,9 +133,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 {
                     label: 'Get Private Key',
                     onClick: () => {
-                        const loadingId = context.addLoading(`Fetching private key for tag "${tag.name}"`);
-                        getPrivateKey(privateKeyDialog).then((privateKey) => {
-                            context.removeLoading(loadingId);
+                        getPrivateKey(privateKeyDialog, `Fetching private key for tag "${tag.name}"`).then((privateKey) => {
                             if (privateKeyShowRef.current) {
                                 privateKeyShowRef.current.textContent = privateKey;
                             }
@@ -152,9 +148,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 {
                     label: 'Add',
                     onClick: () => {
-                        const loadingId = context.addLoading(`Adding key to tag "${tag.name}"`);
-                        addKey(tag.id, addKeyRef.current?.value || '').then(() => {
-                            context.removeLoading(loadingId);
+                        addKey(tag.id, (addKeyRef.current?.value || ''), `Adding key to tag "${tag.name}"`).then(() => {
                             context.refreshData();
                             setAddKeyDialogOpen(false);
                         });
@@ -174,10 +168,8 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 {
                     label: 'Remove',
                     onClick: () => {
-                        const loadingId = context.addLoading(`Deleting tag "${tag.name}"`);
-                        deleteTag(removeTagDialog).then(() => {
+                        deleteTag(removeTagDialog, `Deleting tag "${tag.name}"`).then(() => {
                             onClose();
-                            context.removeLoading(loadingId);
                             context.refreshData();
                         });
                     }

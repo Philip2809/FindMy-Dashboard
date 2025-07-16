@@ -5,6 +5,12 @@ export function formatTime(time: number) {
     const today = new Date();
     const date = new Date(time);
 
+    if (today.getDate() === date.getDate()) {
+        return date.toLocaleTimeString();
+    }
+
+    return date.toLocaleString();
+
     let hours = String(date.getHours()).padStart(2, '0');
     let minutes = String(date.getMinutes()).padStart(2, '0');
 
