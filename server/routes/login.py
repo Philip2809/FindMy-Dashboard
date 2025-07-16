@@ -24,7 +24,7 @@ def create_tag(method_index: int):
     return res.to_json()
 
 # Submit 2FA code
-@login_blueprint.route('/2fa-code/<int:code>', methods=['POST'])
+@login_blueprint.route('/2fa-code/<string:code>', methods=['POST'])
 def submit_2fa_code(code):
     res = utils.login.submit_2fa_code(code)
     

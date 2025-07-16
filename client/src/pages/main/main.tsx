@@ -34,7 +34,7 @@ function getDialog(key: string, action: ActionPayload, onClose: () => void) {
                 onClick: () => {
                     const input = document.getElementById(id) as HTMLInputElement | null;
                     if (!input) return;
-                    const code = +input.value.trim();
+                    const code = input.value.trim();
                     if (!code) return;
                     submit2FACode(code).then((res) => res.status === 200 && onClose())
                 }
