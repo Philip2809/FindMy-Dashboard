@@ -11,10 +11,11 @@ class Key(db.Model):
     tag_id = db.Column(db.String, db.ForeignKey('tag.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.Integer, default=lambda: int(time.time()), nullable=False)
 
-    def __init__(self, private_key, public_key, hashed_public_key, tag_id=None):
+    def __init__(self, private_key, public_key, hashed_public_key, label=None, tag_id=None):
         self.private_key = private_key
         self.public_key = public_key
         self.hashed_public_key = hashed_public_key
+        self.label = label
         self.tag_id = tag_id
 
     def to_dict(self):

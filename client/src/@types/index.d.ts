@@ -34,6 +34,7 @@ export type DataStateContext = {
 
 export interface Key {
     tag_id: string;
+    label?: string;
     public_key: string;
     hashed_public_key: string;
 }

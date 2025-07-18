@@ -14,23 +14,23 @@ public_key - key advertised by the ble beacon
 hashed_public_key - key used to search the database
 
 
-ideas:
+## Features
+- 2FA managment
 
-- reports tab show what you are currently seeing in your view, shown by one color ✓
-- if you click on a group of reports they are shown in the reports tab, indicated by another color ✓
-- doubleclicking reports zooms into those reports ✓
-- display/show info about a tag based on the status byte AND/OR what key was used for the location
-- timestamp based on localization
+
+### future ideas:
+- generate binary for different chips
+- event-driven stuff, based on device status byte AND/OR key used
+- groups, both for data fetching, hide/show and to select bucket to save data in
+- better historical viewer
+- decrypt in browser, either input private key or store private key encrypted
+- allow devices to have same private key
+- pwa?
 
 ## Todo
 
-- 2FA codes in client (account management)
-- Historical data
 - Guides and info about usage
 - Cleanup
-- Fixed published at
-- PWA
-
 
 ## Debug
 

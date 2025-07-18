@@ -2,8 +2,8 @@ import { Tag, TagHttpUpdate } from "../@types";
 import { httpClient } from "./client";
 
 
-export async function addKey(tagId: string, private_key: string, loadingString: string) {
-    const res = await httpClient.post<TagHttpUpdate>(`/keys`, { tag_id: tagId, private_key }, { loadingString });
+export async function addKey(tagId: string, privateKey: string, label: string, loadingString: string) {
+    const res = await httpClient.post<TagHttpUpdate>(`/keys`, { tag_id: tagId, private_key: privateKey, label }, { loadingString });
     return res.data;
 }
 

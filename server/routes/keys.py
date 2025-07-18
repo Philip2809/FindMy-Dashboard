@@ -16,6 +16,7 @@ def create_key():
     data = request.get_json()
     tag_id = data.get('tag_id')
     private_key = data.get('private_key')
+    label = data.get('label')
 
     if not tag_id:
         return jsonify({'error': 'Missing required fields (tag_id)'}), 400
@@ -29,12 +30,12 @@ def create_key():
         # Check if the key already exists, if so return the existing key
         key = Key.query.filter_by(private_key=private_key).first()
         if key:
-            return jsonify(key.to_dict()), 200
+            return jsonify(key.to_dict()), 400
 
     private_key, public_key, hashed_public_key = keygen(private_key)
 
     # Create a new Key record
-    key = Key(private_key=private_key, public_key=public_key, hashed_public_key=hashed_public_key, tag_id=tag_id)
+    key = Key(private_key=private_key, public_key=public_key, hashed_public_key=hashed_public_key, label=label, tag_id=tag_id)
     
     db.session.add(key)
     db.session.commit()

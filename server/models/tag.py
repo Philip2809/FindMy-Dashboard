@@ -10,7 +10,7 @@ class Tag(db.Model):
     id = db.Column(db.String, primary_key=True, default=CUID_GENERATOR.generate)
     icon = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
-    label = db.Column(db.String, nullable=False)
+    label = db.Column(db.String, nullable=True)
     color = db.Column(db.String, nullable=False)
     created_at = db.Column(db.Integer, default=lambda: int(time.time()), nullable=False)
 

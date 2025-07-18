@@ -60,6 +60,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     const [privateKeyDialog, setPrivateKeyDialog] = useState<string>(); // public key of key
 
     const addKeyRef = useRef<HTMLInputElement>(null);
+    const addKeyLabelRef = useRef<HTMLInputElement>(null);
     const privateKeyShowRef = useRef<HTMLElement>(null);
 
     return (
@@ -94,9 +95,10 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                         <div key={index} className={styles.key}>
                             <div className={styles.keyInfo}>
                                 <div className={styles.keyTitle}>
-                                    {getMacAddress(key.public_key)}
+                                    { key.label ? key.label : getMacAddress(key.public_key)}
                                 </div>
                                 <div className={styles.keyDetails}>
+                                    { key.label && <><span>MAC: {getMacAddress(key.public_key)}</span><br /></> }
                                     <span>Public key: {key.public_key}</span>
                                     <br />
                                     <span>Hashed public key: {key.hashed_public_key}</span>
@@ -148,7 +150,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 {
                     label: 'Add',
                     onClick: () => {
-                        addKey(tag.id, (addKeyRef.current?.value || ''), `Adding key to tag "${tag.name}"`).then(() => {
+                        addKey(tag.id, (addKeyRef.current?.value || ''), (addKeyLabelRef.current?.value || ''), `Adding key to tag "${tag.name}"`).then(() => {
                             context.refreshData();
                             setAddKeyDialogOpen(false);
                         });
@@ -156,9 +158,14 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 },
                 { label: 'Cancel', onClick: () => { setAddKeyDialogOpen(false); } }
             ]}>
-                A new private key will be generated and added to the tag. If you want to add an existing key, paste the private key below (in base64).
+                <p>Each BLE beacon is advertising a unique public key, to identify the BLE beacon you can use the label field. </p>
+                
+                The public key is generated from the private key. By adding a key a public and private key pair will be generated.
+                If you want to use an existing private/public key pair, paste the private key below in base64 format.
+                (Functions for incremental and multiple keys are on the way)
                 <br />
                 <br />
+                <input type='text' placeholder='Label (optional)' ref={addKeyLabelRef} className={styles.addKeyInput} />
                 <input type='text' placeholder='Private key (optional)' ref={addKeyRef} className={styles.addKeyInput} />
             </Dialog>}
 

@@ -12,14 +12,18 @@ def sha256(data):
 def keygen(private_key=None):
     if private_key:
         private_key_int = int.from_bytes(base64.b64decode(private_key), 'big')
-    else:
-        private_key_int = random.getrandbits(224)
 
-    public_key_int = ec.derive_private_key(
-        private_key_int,
-        ec.SECP224R1(),
-        default_backend()
-    ).public_key().public_numbers().x
+        # TODO: Ensure the private key is valid for the curve
+        public_key_int = ec.derive_private_key(
+            private_key_int,
+            ec.SECP224R1(),
+            default_backend()
+        )
+    else:
+        private_key_obj = ec.generate_private_key(ec.SECP224R1(), default_backend())
+        private_key_int = private_key_obj.private_numbers().private_value
+
+    public_key_int = private_key_obj.public_key().public_numbers().x
 
     private_key_bytes = private_key_int.to_bytes(28, 'big')
     public_key_bytes = public_key_int.to_bytes(28, 'big')
