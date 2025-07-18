@@ -10,7 +10,6 @@ import { actionDispatcher, ActionPayload } from '../../utils/dispatchers/action.
 
 
 function getDialog(key: string, action: ActionPayload, onClose: () => void) {
-    console.warn('getDialog', key, action);
     switch (action.type) {
         case 'dialogs.message':
             return <Dialog key={key} title={'Info'} onClose={onClose}>

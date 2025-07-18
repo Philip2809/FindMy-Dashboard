@@ -158,6 +158,15 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
 
+                &#settings {
+                    color: yellow;
+
+                    &:hover {
+                        color: orange;
+                        transform: scale(1.1);
+                    }
+                }
+
                 &#trash {
                     color: tomato;
 
@@ -166,17 +175,23 @@
                         transform: scale(1.1);
                     }
                 }
-
-                &#key {
-                    color: greenyellow;
-
-                    &:hover {
-                        color: green;
-                        transform: scale(1.1);
-                    }
-                }
             }
         }
+    }
+}
 
+.keySettingsPrivateKey {
+    display: grid;
+    position: relative;
+
+    .privateKeyInput {
+        font-family: monospace;
+    }
+
+    .togglePrivateKey {
+        position: absolute;
+        justify-self: end;
+        align-self: center;
+        margin-right: 0.5rem;
     }
 }

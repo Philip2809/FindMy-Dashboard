@@ -1,13 +1,13 @@
 
 import { FaXmark } from 'react-icons/fa6';
-import { Tag } from '../../@types';
+import { Key, Tag } from '../../@types';
 import ReactIcon from '../../icon';
 import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
-import { FaKey, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaCog, FaEye, FaKey, FaPlus, FaTrash } from 'react-icons/fa';
 import { useContext, useRef, useState } from 'react';
 import DataContext from '../../context/data';
-import { deleteKey, getPrivateKey, addKey } from '../../network/keys';
+import { addKey, deleteKey, getPrivateKey, updateKey } from '../../network/keys';
 import { deleteTag, addOrUpdateTag } from '../../network/tags';
 
 
@@ -57,7 +57,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     const [editTagDialogOpen, setEditTagDialogOpen] = useState(false);
     const [removeTagDialog, setRemoveTagDialog] = useState<string>(); // tag id
     const [removeKeyDialog, setRemoveKeyDialog] = useState<string>(); // public key of key
-    const [privateKeyDialog, setPrivateKeyDialog] = useState<string>(); // public key of key
+    const [editKeyDialog, setEditKeyDialog] = useState<Key>(); // public key of key
 
     const addKeyRef = useRef<HTMLInputElement>(null);
     const addKeyLabelRef = useRef<HTMLInputElement>(null);
@@ -85,7 +85,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                     }
                 ]}
                 onClose={onClose}>
-                <span>Label: {tag.label}</span>
+                <span>{tag.description}</span>
                 <div className={styles.keysActions}>
                     <span>Keys:</span>
                     <FaPlus className={styles.addKeyBtn} onClick={() => { setAddKeyDialogOpen(true) }} />
@@ -106,13 +106,15 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                             </div>
 
                             <div className={styles.keyActions}>
-                                <FaKey className={styles.keyButton} id={styles.key} onClick={() => setPrivateKeyDialog(key.public_key)} />
+                                <FaCog className={styles.keyButton} id={styles.settings} onClick={() => setEditKeyDialog(key)} />
                                 <FaTrash className={styles.keyButton} id={styles.trash} onClick={() => setRemoveKeyDialog(key.public_key)} />
                             </div>
                         </div>
                     ))}
                 </div>
             </Dialog>
+
+            {editKeyDialog && <KeySettingsDialog fmKey={editKeyDialog} onClose={() => setEditKeyDialog(undefined)} />}
 
             {removeKeyDialog && <Dialog title='Remove key' onClose={() => setRemoveKeyDialog(undefined)} actions={[
                 {
@@ -129,21 +131,6 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 Are you sure you want to remove this key?
                 <br />
                 <span style={{ color: 'red' }}>This action cannot be undone.</span>
-            </Dialog>}
-
-            {privateKeyDialog && <Dialog title='Private key' onClose={() => setPrivateKeyDialog(undefined)} actions={[
-                {
-                    label: 'Get Private Key',
-                    onClick: () => {
-                        getPrivateKey(privateKeyDialog, `Fetching private key for tag "${tag.name}"`).then((privateKey) => {
-                            if (privateKeyShowRef.current) {
-                                privateKeyShowRef.current.textContent = privateKey;
-                            }
-                        });
-                    }
-                }
-            ]}>
-                <code ref={privateKeyShowRef}>View the private key by pressing the button below</code>
             </Dialog>}
 
             {addKeyDialogOpen && <Dialog title='Add key' onClose={() => setAddKeyDialogOpen(false)} actions={[
@@ -191,6 +178,74 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     );
 }
 
+export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () => void }) => {
+    const context = useContext(DataContext);
+    if (!context) return null;
+
+    const keyLabelRef = useRef<HTMLInputElement>(null);
+    const privateKeyShowRef = useRef<HTMLInputElement>(null);
+
+    return (
+        <Dialog title={'Key settings'} onClose={onClose} actions={[
+            {
+                label: 'Save',
+                onClick: () => {
+                    console.log('Saving key settings', keyLabelRef.current?.value, fmKey);
+                    updateKey({
+                        ...fmKey,
+                        label: keyLabelRef.current?.value || '',
+                    }).then(() => {
+                        context.refreshData();
+                        onClose();
+                    });
+                    // addOrUpdateTag({
+                    //     ...(tag && { id: tag.id }),
+                    //     name: keyNameRef.current?.value || '',
+                    //     description: keyLabelRef.current?.value,
+                    //     icon: keyIconRef.current?.value || '',
+                    //     color: keyColorRef.current?.value || '',
+                    // }).then(() => {
+                    //     context.refreshData();
+                    //     onClose();
+                    // });
+                }
+            },
+            { label: 'Cancel', onClick: onClose }
+        ]}>
+            <span>Label</span>
+            <input type='text' placeholder='Label' defaultValue={fmKey?.label} ref={keyLabelRef} className={styles.addKeyInput} />
+            <span>Private key</span>
+            <div className={styles.keySettingsPrivateKey}>
+                <input type='password' defaultValue={'my very awesome fake private key that yo'} readOnly disabled ref={privateKeyShowRef} className={`${styles.privateKeyInput} ${styles.addKeyInput}`} />
+                <FaEye size={32} className={styles.togglePrivateKey} onClick={() => {
+                        const input = privateKeyShowRef.current;
+                        if (!input) return; // TODO: error
+                        if (input.hasAttribute('privKey')) {
+                            input.type = input.type === 'password' ? 'text' : 'password';
+                            return;
+                        }
+
+                        getPrivateKey(fmKey.public_key).then((privateKey) => {
+                            input.setAttribute('privKey', 'true');
+                            input.type = 'text';
+                            input.value = privateKey;
+                        });
+                    }} />
+            </div>
+            {/* <h3>Private key</h3>
+            <code ref={privateKeyShowRef} style={{ display: 'none' }}>View the private key by pressing the button below</code>
+            <button onClick={() => {
+                getPrivateKey(fmKey.public_key).then((privateKey) => {
+                    if (privateKeyShowRef.current) {
+                        privateKeyShowRef.current.textContent = privateKey;
+                        privateKeyShowRef.current.style.display = 'block';
+                    }
+                });
+            }} className={styles.dialogButton}>test</button> */}
+        </Dialog>
+    )
+}
+
 export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void }) => {
     const context = useContext(DataContext);
     if (!context) return null;
@@ -213,15 +268,13 @@ export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void
             {
                 label: 'Save',
                 onClick: () => {
-                    const loadingId = context.addLoading(`Saving tag`);
                     addOrUpdateTag({
                         ...(tag && { id: tag.id }),
                         name: keyNameRef.current?.value || '',
-                        label: keyLabelRef.current?.value || '',
+                        description: keyLabelRef.current?.value,
                         icon: keyIconRef.current?.value || '',
                         color: keyColorRef.current?.value || '',
                     }).then(() => {
-                        context.removeLoading(loadingId);
                         context.refreshData();
                         onClose();
                     });
@@ -231,8 +284,8 @@ export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void
         ]}>
             <span>Name</span>
             <input type='text' placeholder='Name' defaultValue={tag?.name} ref={keyNameRef} onChange={inputChange} className={styles.addKeyInput} />
-            <span>Label</span>
-            <input type='text' placeholder='Label' defaultValue={tag?.label} ref={keyLabelRef} onChange={inputChange} className={styles.addKeyInput} />
+            <span>Description</span>
+            <input type='text' placeholder='Description' defaultValue={tag?.description} ref={keyLabelRef} onChange={inputChange} className={styles.addKeyInput} />
             <span>Icon <a style={{ color: 'white' }} href="https://react-icons.github.io/react-icons/" target="_blank" rel="noopener noreferrer">(any react icon)</a></span>
             <div className={styles.addTagIconPreviewInput}>
                 <span className={styles.addTagIconPreview} style={{ color: color }}><ReactIcon icon={icon} /></span>

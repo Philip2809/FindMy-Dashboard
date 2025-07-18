@@ -2,8 +2,11 @@
 work in progress
 
 
+> [!WARNING]  
+> Currently, this project does not include authentication. The design is intended for self-hosting on a local network and is not meant to be exposed to the internet.
+
 ## VERY IMPORTANT - READ ME!
-<b> Currently, this project does not include authentication. The design is intended for self-hosting on a local network and is not meant to be exposed to the internet. </b>
+<b>  </b>
 #
 
 ## notes:
@@ -17,20 +20,38 @@ hashed_public_key - key used to search the database
 ## Features
 - 2FA managment
 
+### Todo before release:
+- fix the viewing and clicked reports list
+- fix the buttons for opening said list
+- sync all button
+- remove account data to restart
+- osm provider and allow user to change to maptiler with api key
+- if error during sync, show error message
+- move dialog code into different files
+- test all features and find bugs
+    - in the low quality the filters is not working
+- write guide and readme
+- DOCKERIZE!
+- automatic data fetching
 
-### future ideas:
+### To be improved:
+- allow user to customize data fetch interval
+- export/import keys and tags
+- allow user to set when "low quality" is used
 - generate binary for different chips
 - event-driven stuff, based on device status byte AND/OR key used
 - groups, both for data fetching, hide/show and to select bucket to save data in
+- incremental keys?
 - better historical viewer
+- allow devices to have same private key?
+- sizing inconsistencies
+- compile all theme stuff into one file and use variables better
+- the reports info can get prettier
+- error handling on some parts where very obscure errors could happen
 - decrypt in browser, either input private key or store private key encrypted
-- allow devices to have same private key
+- left click to quickly view detailed reports of click place?
+- allow user to change where the differnt panels are and how big they are?
 - pwa?
-
-## Todo
-
-- Guides and info about usage
-- Cleanup
 
 ## Debug
 

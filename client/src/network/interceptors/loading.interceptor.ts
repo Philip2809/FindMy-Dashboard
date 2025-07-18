@@ -40,5 +40,5 @@ export const responseLoadingInterceptorError = async (error: any) => {
     id: error.config.loadingId,
   });
 
-  return error;
+  return Promise.reject(error);
 }

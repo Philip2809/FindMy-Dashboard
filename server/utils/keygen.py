@@ -14,7 +14,7 @@ def keygen(private_key=None):
         private_key_int = int.from_bytes(base64.b64decode(private_key), 'big')
 
         # TODO: Ensure the private key is valid for the curve
-        public_key_int = ec.derive_private_key(
+        private_key_obj = ec.derive_private_key(
             private_key_int,
             ec.SECP224R1(),
             default_backend()

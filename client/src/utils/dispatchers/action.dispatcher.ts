@@ -20,4 +20,4 @@ type TwoFACodePayload = {
 
 export type ActionPayload = MessageActionPayload | TwoFAMethodPayLoad | TwoFACodePayload;
 
-export const actionDispatcher = new Dispatcher<MessageActionPayload | TwoFAMethodPayLoad | TwoFACodePayload>();
+export const actionDispatcher = new Dispatcher<ActionPayload>();

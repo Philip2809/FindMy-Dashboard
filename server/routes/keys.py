@@ -3,6 +3,7 @@ import urllib
 from models.key import Key
 from db import db
 from models.tag import Tag
+from utils.login import ShowMessage
 from utils.keygen import keygen
 import utils.fetch_reports
 
@@ -42,6 +43,24 @@ def create_key():
     
     return jsonify(key.to_dict()), 201
 
+# Create a new tag
+@keys_blueprint.route('/', methods=['PATCH'])
+def update_tag():
+    data = request.get_json()
+    public_key = data.get('public_key')
+    label = data.get('label')
+
+    if not public_key :
+        return ShowMessage("Missing required fields", 400).to_json()
+
+    existing_key = Key.query.get(public_key)
+    if not existing_key:
+        return jsonify({'error': 'Tag not found'}), 404
+    # Update existing tag
+    existing_key.label = label
+    db.session.commit()
+
+    return jsonify(existing_key.to_dict()), 200
 
 # Get all keys OR get a specific key by public_key
 @keys_blueprint.route('/', methods=['GET'])
@@ -66,7 +85,6 @@ def delete_key():
     public_key = request.args.get('publicKey')
     print(public_key)
     key = (Key.query.get(public_key))
-
 
     if not key:
         return jsonify({'error': 'Key not found'}), 404

@@ -16,11 +16,11 @@ def create_tag():
     id = data.get('id')
     icon = data.get('icon')
     name = data.get('name')
-    label = data.get('label')
+    description = data.get('description')
     color = data.get('color')
 
-    if not icon or not name or not label or not color:
-        return jsonify({'error': 'Missing required fields'}), 400
+    if not icon or not name or not color:
+        return ShowMessage("Missing required fields", 400).to_json()
 
     if id:
         existing_tag = Tag.query.get(id)
@@ -29,14 +29,14 @@ def create_tag():
         # Update existing tag
         existing_tag.icon = icon
         existing_tag.name = name
-        existing_tag.label = label
+        existing_tag.description = description
         existing_tag.color = color
         db.session.commit()
 
         return jsonify(existing_tag.to_dict()), 200
         
     
-    tag = Tag(icon=icon, name=name, label=label, color=color)
+    tag = Tag(icon, name, description, color)
     db.session.add(tag)
     db.session.commit()
     

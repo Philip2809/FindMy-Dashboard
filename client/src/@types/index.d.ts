@@ -47,7 +47,7 @@ export interface TagHttpUpdate {
     id?: string;
     icon: string;
     name: string;
-    label: string;
+    description?: string;
     color: string;
 }
 export interface Tag extends TagHttpUpdate {

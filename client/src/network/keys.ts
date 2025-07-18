@@ -1,14 +1,19 @@
-import { Tag, TagHttpUpdate } from "../@types";
+import { Key } from "../@types";
 import { httpClient } from "./client";
 
 
-export async function addKey(tagId: string, privateKey: string, label: string, loadingString: string) {
-    const res = await httpClient.post<TagHttpUpdate>(`/keys`, { tag_id: tagId, private_key: privateKey, label }, { loadingString });
+export async function addKey(tag_id: string, private_key: string, label: string, loadingString: string) {
+    const res = await httpClient.post(`/keys`, { tag_id, private_key, label }, { loadingString });
     return res.data;
 }
 
-export async function getPrivateKey(public_key: string, loadingString: string) {
-    const res = await httpClient.get(`/keys?publicKey=${encodeURIComponent(public_key)}`, { loadingString });
+export async function updateKey(key: Key) {
+    const res = await httpClient.patch(`/keys`, key, { loadingString: 'Updating key' });
+    return res.data;
+}
+
+export async function getPrivateKey(public_key: string) {
+    const res = await httpClient.get(`/keys?publicKey=${encodeURIComponent(public_key)}`, { loadingString: 'Fetching a private key' });
     return res.data;
 }
 

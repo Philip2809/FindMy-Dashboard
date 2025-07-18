@@ -11,7 +11,7 @@ class Key(db.Model):
     tag_id = db.Column(db.String, db.ForeignKey('tag.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.Integer, default=lambda: int(time.time()), nullable=False)
 
-    def __init__(self, private_key, public_key, hashed_public_key, label=None, tag_id=None):
+    def __init__(self, private_key, public_key, hashed_public_key, label, tag_id):
         self.private_key = private_key
         self.public_key = public_key
         self.hashed_public_key = hashed_public_key
@@ -19,12 +19,16 @@ class Key(db.Model):
         self.tag_id = tag_id
 
     def to_dict(self):
-        return {
+        data = {
             'public_key': self.public_key,
             'hashed_public_key': self.hashed_public_key,
-            'label': self.label,
             'tag_id': self.tag_id
         }
+
+        if self.label is not None:
+            data['label'] = self.label
+
+        return data
         
     def get_private_key(self):
         return self.private_key
