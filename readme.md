@@ -21,6 +21,10 @@ hashed_public_key - key used to search the database
 - 2FA managment
 
 ### Todo before release:
+- finish up key settings ✅
+    - private key btn needs css ✅
+    - add copy button for it as well ✅
+    - make the code more compact here
 - fix the viewing and clicked reports list
 - fix the buttons for opening said list
 - sync all button
@@ -51,6 +55,7 @@ hashed_public_key - key used to search the database
 - decrypt in browser, either input private key or store private key encrypted
 - left click to quickly view detailed reports of click place?
 - allow user to change where the differnt panels are and how big they are?
+- maybe make the copy private key button select the text?
 - pwa?
 
 ## Debug

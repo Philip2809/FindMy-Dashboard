@@ -188,10 +188,23 @@
         font-family: monospace;
     }
 
-    .togglePrivateKey {
+    .privateKeyActions {
         position: absolute;
         justify-self: end;
         align-self: center;
         margin-right: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .actionBtn {
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                color: #888bbb;
+                transform: scale(1.1);
+            }
+        }
     }
 }

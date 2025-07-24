@@ -4,11 +4,12 @@ import { Key, Tag } from '../../@types';
 import ReactIcon from '../../icon';
 import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
-import { FaCog, FaEye, FaKey, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaCog, FaCopy, FaEye, FaPlus, FaTrash } from 'react-icons/fa';
 import { useContext, useRef, useState } from 'react';
 import DataContext from '../../context/data';
 import { addKey, deleteKey, getPrivateKey, updateKey } from '../../network/keys';
 import { deleteTag, addOrUpdateTag } from '../../network/tags';
+import { CopyText } from '../copy-text';
 
 
 interface DialogProps {
@@ -82,6 +83,10 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                     {
                         label: 'Remove',
                         onClick: () => setRemoveTagDialog(tag.id)
+                    },
+                    {
+                        label: 'Close',
+                        onClick: onClose
                     }
                 ]}
                 onClose={onClose}>
@@ -91,26 +96,30 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                     <FaPlus className={styles.addKeyBtn} onClick={() => { setAddKeyDialogOpen(true) }} />
                 </div>
                 <div className={styles.keys}>
-                    {tag.keys.map((key, index) => (
-                        <div key={index} className={styles.key}>
-                            <div className={styles.keyInfo}>
-                                <div className={styles.keyTitle}>
-                                    { key.label ? key.label : getMacAddress(key.public_key)}
-                                </div>
-                                <div className={styles.keyDetails}>
-                                    { key.label && <><span>MAC: {getMacAddress(key.public_key)}</span><br /></> }
-                                    <span>Public key: {key.public_key}</span>
-                                    <br />
-                                    <span>Hashed public key: {key.hashed_public_key}</span>
-                                </div>
-                            </div>
+                    {tag.keys.map((key, index) => {
+                        const macAddress = getMacAddress(key.public_key);
 
-                            <div className={styles.keyActions}>
-                                <FaCog className={styles.keyButton} id={styles.settings} onClick={() => setEditKeyDialog(key)} />
-                                <FaTrash className={styles.keyButton} id={styles.trash} onClick={() => setRemoveKeyDialog(key.public_key)} />
+                        return (
+                            <div key={index} className={styles.key}>
+                                <div className={styles.keyInfo}>
+                                    <div className={styles.keyTitle}>
+                                        <CopyText text={key.label || macAddress} />
+                                    </div>
+                                    <div className={styles.keyDetails}>
+                                        {key.label && <><span>MAC: <CopyText text={macAddress}><b>{macAddress}</b></CopyText></span><br /></>}
+                                        <span>Public key: <CopyText text={key.public_key} /> </span>
+                                        <br />
+                                        <span>Hashed public key: <CopyText text={key.hashed_public_key} /> </span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.keyActions}>
+                                    <FaCog className={styles.keyButton} id={styles.settings} onClick={() => setEditKeyDialog(key)} />
+                                    <FaTrash className={styles.keyButton} id={styles.trash} onClick={() => setRemoveKeyDialog(key.public_key)} />
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </Dialog>
 
@@ -146,7 +155,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 { label: 'Cancel', onClick: () => { setAddKeyDialogOpen(false); } }
             ]}>
                 <p>Each BLE beacon is advertising a unique public key, to identify the BLE beacon you can use the label field. </p>
-                
+
                 The public key is generated from the private key. By adding a key a public and private key pair will be generated.
                 If you want to use an existing private/public key pair, paste the private key below in base64 format.
                 (Functions for incremental and multiple keys are on the way)
@@ -217,9 +226,25 @@ export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () 
             <span>Private key</span>
             <div className={styles.keySettingsPrivateKey}>
                 <input type='password' defaultValue={'my very awesome fake private key that yo'} readOnly disabled ref={privateKeyShowRef} className={`${styles.privateKeyInput} ${styles.addKeyInput}`} />
-                <FaEye size={32} className={styles.togglePrivateKey} onClick={() => {
+                <div className={styles.privateKeyActions}>
+                    <FaCopy className={styles.actionBtn} size={24} onClick={() => {
                         const input = privateKeyShowRef.current;
-                        if (!input) return; // TODO: error
+                        if (!input) return; // TODO: obscure error handling
+                        if (input.hasAttribute('privKey')) {
+                            navigator.clipboard.writeText(input.value);
+                            input.setSelectionRange(0, input.value.length);
+                            return;
+                        }
+
+                        getPrivateKey(fmKey.public_key).then((privateKey) => {
+                            input.setAttribute('privKey', 'true');
+                            input.value = privateKey;
+                            navigator.clipboard.writeText(privateKey);
+                        });
+                    }} />
+                    <FaEye className={styles.actionBtn} size={32} onClick={() => {
+                        const input = privateKeyShowRef.current;
+                        if (!input) return; // TODO: obscure error handling
                         if (input.hasAttribute('privKey')) {
                             input.type = input.type === 'password' ? 'text' : 'password';
                             return;
@@ -231,17 +256,8 @@ export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () 
                             input.value = privateKey;
                         });
                     }} />
+                </div>
             </div>
-            {/* <h3>Private key</h3>
-            <code ref={privateKeyShowRef} style={{ display: 'none' }}>View the private key by pressing the button below</code>
-            <button onClick={() => {
-                getPrivateKey(fmKey.public_key).then((privateKey) => {
-                    if (privateKeyShowRef.current) {
-                        privateKeyShowRef.current.textContent = privateKey;
-                        privateKeyShowRef.current.style.display = 'block';
-                    }
-                });
-            }} className={styles.dialogButton}>test</button> */}
         </Dialog>
     )
 }
