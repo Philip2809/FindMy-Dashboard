@@ -9,7 +9,7 @@ import DataContext from '../../context/data';
 import { ReportPoint } from '../../data';
 import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaExchangeAlt, FaInfoCircle } from 'react-icons/fa';
 import { Dialog } from '../dialog/Dialog';
 const Conf_Colors: { [key: number]: string } = {
     1: 'red',
@@ -31,12 +31,15 @@ const Reports = () => {
                     <div>
                         <span>Reports - {context.clickedReports.length ? 'clicked' : 'in view'}</span>
                     </div>
-                    <div>
-                        {/* cannot remember what i wanted this for */}
-                        {/* <FaExchangeAlt /> */}
-                    </div>
                 </div>
                 <div style={{ flexGrow: 1 }}>
+                    {
+                        (context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length) === 0 && (
+                            <div className={styles.noReports}>
+                                <span>No reports in view</span>
+                            </div>
+                        )
+                    }
                     <AutoSizer>
                         {({ height, width }: Size) => (
                             <FixedSizeList

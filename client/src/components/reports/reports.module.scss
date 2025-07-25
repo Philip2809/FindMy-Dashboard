@@ -11,3 +11,13 @@
     border-radius: 5px !important;
     border: 1px solid white !important;
 }
+
+.noReports {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    color: white;
+    font-size: 1.5rem;
+}

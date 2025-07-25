@@ -69,7 +69,7 @@ const Main = () => {
         <div className={styles.main}>
             {displayReports && <div className={styles.reports}> <Reports /> </div>}
             <div className={styles.map} style={{ gridColumn: displayReports ? '2 / span 2' : '1 / span 3' }} id='map'>
-                <Map setDisplayReports={setDisplayReports} />
+                <Map displayReports={displayReports} setDisplayReports={setDisplayReports} />
             </div>
             <div className={styles.tags}> <Tags /> </div>
 

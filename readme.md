@@ -25,8 +25,9 @@ hashed_public_key - key used to search the database
     - private key btn needs css ✅
     - add copy button for it as well ✅
     - make the code more compact here
+- fully remove mui
 - fix the viewing and clicked reports list
-- fix the buttons for opening said list
+- fix the buttons for opening said list ✅
 - sync all button
 - remove account data to restart
 - osm provider and allow user to change to maptiler with api key

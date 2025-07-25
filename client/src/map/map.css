@@ -55,3 +55,14 @@
     background-color: #39375B;
   }
 }
+
+.displayReportsBtn {
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        color: #888bbb; /* Tomato color on hover */
+        transform: scale(1.2);
+    }
+}

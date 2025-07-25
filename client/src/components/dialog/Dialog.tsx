@@ -17,7 +17,7 @@ interface DialogProps {
     title: React.ReactNode;
     children: React.ReactNode;
     actions?: {
-        label: string;
+        label: React.ReactNode;
         onClick: () => void;
     }[]
 }
