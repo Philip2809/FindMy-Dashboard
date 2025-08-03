@@ -38,7 +38,7 @@ hashed_public_key - key used to search the database
     - in the low quality the filters is not working ✅
 - write guide and readme
 - TEST THE ENTIRE LOGIN FLOW + if unauthorized by removing device via apple ✅
-- DOCKERIZE!
+- DOCKERIZE! ✅
 - automatic data fetching
 
 ### To be improved:
@@ -54,6 +54,7 @@ hashed_public_key - key used to search the database
 - better historical viewer
 - allow devices to have same private key?
 - influxdb bucket is hardcoded, allow user to change it, in the future.
+- make some errors more informative
 - code cleanup
     - move dialog code into different files
 - sizing inconsistencies

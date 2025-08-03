@@ -1,0 +1,26 @@
+# Backend
+**/__pycache__/
+**/.env
+**/.venv/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+
+# Client
+**/node_modules/
+**/.vite/
+**/dist/
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# FindMy Dashboard
+server/apple_creds.json

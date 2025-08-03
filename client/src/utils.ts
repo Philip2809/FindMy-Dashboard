@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export function getOsmStyle(): maplibregl.StyleSpecification {
     return {
         "version": 8,

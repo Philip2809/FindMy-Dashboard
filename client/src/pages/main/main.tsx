@@ -1,4 +1,5 @@
 import styles from './main.module.scss';
+import dialogStyles from '../../components/dialog/Dialog.module.scss';
 import Map from '../../map'
 import Reports from '../../components/reports';
 import Tags from '../../components/tags';
@@ -39,7 +40,8 @@ function getDialog(key: string, action: ActionPayload, onClose: () => void) {
                 }
             }]} onClose={onClose}>
                 <span>Please await and enter the 2FA code sent to your trusted device or phone number.</span>
-                <input type='text' id={id} placeholder='2FA code' className={styles.addKeyInput} />
+                <br />
+                <input type='text' id={id} placeholder='2FA code' className={dialogStyles.addKeyInput} />
             </Dialog>;
     }
 }

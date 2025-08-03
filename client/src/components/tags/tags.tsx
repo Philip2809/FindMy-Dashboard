@@ -14,6 +14,7 @@ import { TagDialog, TagEditDialog } from '../dialog/Dialog';
 import { TbAuth2Fa } from 'react-icons/tb';
 import { login } from '../../network/auth';
 import { downloadReports } from '../../network/keys';
+import { Tag } from '../../@types';
 
 const Tags = () => {
     const context = useContext(DataContext);
@@ -26,7 +27,8 @@ const Tags = () => {
 
     return (
         <>
-            { selectedTagId && <TagDialog tag={context.tags.get(selectedTagId)} onClose={ () => setSelectedTagId(undefined) } /> }
+            { /* I don't like the use of casting like this, but its fine in this case */ }
+            { selectedTagId && <TagDialog tag={context.tags.get(selectedTagId) as Tag} onClose={ () => setSelectedTagId(undefined) } /> }
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>

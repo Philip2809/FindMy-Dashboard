@@ -6,3 +6,10 @@ body {
   background-color: #39375B;
   color: white;
 }
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}

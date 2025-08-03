@@ -45,7 +45,7 @@ export class LatestController {
     refreshSeeingReports() {
         const features = this.map?.queryRenderedFeatures({ layers: [LatestMapLayers.main, LatestMapLayers.mainLowDetail] }) as unknown as ReportPoint[] || [];
         
-        console.log(features.length, 'points');
+        // console.log(features.length, 'points');
         if (features.length < 500) this.latestLayer?.setDetailLevel(false);
         else this.latestLayer?.setDetailLevel(true);
 

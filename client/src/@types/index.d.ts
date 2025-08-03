@@ -27,9 +27,6 @@ export type DataStateContext = {
     setTimeRange: useState<string>;
     reportsPerTag: number;
     setReportsPerTag: useState<number>;
-
-    addLoading: (message: string) => number;
-    removeLoading: (time: number) => void;
 };
 
 export interface Key {

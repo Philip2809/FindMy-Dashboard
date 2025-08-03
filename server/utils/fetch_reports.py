@@ -2,11 +2,9 @@ import os
 
 from utils.login import ShowMessage, get_account
 from findmy import KeyPair
-from findmy.reports import RemoteAnisetteProvider
-import influxdb_client, os, time
+import influxdb_client, os
 from influxdb_client import Point
 from influxdb_client.client.write_api import SYNCHRONOUS
-from models.key import Key
 
 token = os.getenv("INFLUXDB_TOKEN")
 org = os.getenv("INFLUXDB_ORG")
@@ -26,11 +24,10 @@ def get_reports(keys: list[str]):
     try:
         reports = accORshowMessage.fetch_last_reports(keys)
     except Exception as e:
-        print(f"Error fetching reports: {e}")
         return ShowMessage(f"Failed to fetch reports, most likely you need to redo 2FA. Error from FindMy.py: {e}", 500).to_json()
     points = []
     for key in reports:
-        print(key, len(reports[key]))
+        # print(key, len(reports[key])) # Debugging comment
         for report in sorted(reports[key]):
             point = (
                 Point(report.hashed_adv_key_b64)

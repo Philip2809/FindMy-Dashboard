@@ -2,4 +2,4 @@ import os
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False  # Disable track modifications to avoid overhead
+    SQLALCHEMY_TRACK_MODIFICATIONS = False

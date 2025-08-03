@@ -51,7 +51,6 @@ export const Dialog = ({ children, title, actions, onClose }: DialogProps) => {
 };
 
 export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) => {
-
     const context = useContext(DataContext);
     if (!context) return null;
     const [addKeyDialogOpen, setAddKeyDialogOpen] = useState(false);
@@ -62,7 +61,6 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
 
     const addKeyRef = useRef<HTMLInputElement>(null);
     const addKeyLabelRef = useRef<HTMLInputElement>(null);
-    const privateKeyShowRef = useRef<HTMLElement>(null);
 
     return (
         <>
@@ -199,7 +197,6 @@ export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () 
             {
                 label: 'Save',
                 onClick: () => {
-                    console.log('Saving key settings', keyLabelRef.current?.value, fmKey);
                     updateKey({
                         ...fmKey,
                         label: keyLabelRef.current?.value || '',
@@ -207,16 +204,6 @@ export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () 
                         context.refreshData();
                         onClose();
                     });
-                    // addOrUpdateTag({
-                    //     ...(tag && { id: tag.id }),
-                    //     name: keyNameRef.current?.value || '',
-                    //     description: keyLabelRef.current?.value,
-                    //     icon: keyIconRef.current?.value || '',
-                    //     color: keyColorRef.current?.value || '',
-                    // }).then(() => {
-                    //     context.refreshData();
-                    //     onClose();
-                    // });
                 }
             },
             { label: 'Cancel', onClick: onClose }

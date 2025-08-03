@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import random
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
 

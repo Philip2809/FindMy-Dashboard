@@ -32,7 +32,11 @@ def create_key():
         if key:
             return jsonify(key.to_dict()), 400
 
-    private_key, public_key, hashed_public_key = keygen(private_key)
+    # This is not the best way, but it works for now
+    try:
+        private_key, public_key, hashed_public_key = keygen(private_key)
+    except:
+        return ShowMessage("Failed to generate key", 400).to_json()
 
     # Create a new Key record
     key = Key(private_key=private_key, public_key=public_key, hashed_public_key=hashed_public_key, label=label, tag_id=tag_id)
@@ -82,7 +86,6 @@ def get_keys():
 @keys_blueprint.route('/', methods=['DELETE'])
 def delete_key():
     public_key = request.args.get('publicKey')
-    print(public_key)
     key = (Key.query.get(public_key))
 
     if not key:
