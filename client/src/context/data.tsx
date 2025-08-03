@@ -8,7 +8,7 @@ const DataContext = createContext<DataStateContext | null>(null)
 export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
     const [tags, setTags] = useState<Tags>(new Map());
     const [reports, setReports] = useState<Reports>(new Map());
-    const [seeingReports, setSeeingReports] = useState<ReportPoint[]>([]);
+    const [seeingReports, setSeeingReports] = useState<ReportPoint[] | null>([]);
     const [clickedReports, setClickedReports] = useState<ReportPoint[]>([]);
     const [selectedReport, setSelectedReport] = useState<ReportPoint | null>(null);
     const [disabledTags, setDisabledTags] = useState<Set<string>>(new Set());
@@ -23,16 +23,6 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
             setTags(res.mappedTags);
             setReports(res.mappedReports);
         });
-    }
-
-
-    const addLoading = (message: string) => {
-        // const time = Date.now();
-        // setLoading((prev) => [...prev, { time, message }]);
-        // return time;
-    }
-    const removeLoading = (time: number) => {
-        // setLoading((prev) => prev.filter((e) => e.time !== time));
     }
 
     const toggleTag = (tagId: string) => {
@@ -68,7 +58,6 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
             timeRange, setTimeRange,
             reportsPerTag, setReportsPerTag,
             disabledTags, toggleTag,
-            addLoading, removeLoading
         }}>
             {loading.length > 0 && (
                 <div className={styles.loading}>

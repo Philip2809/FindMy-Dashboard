@@ -17,20 +17,13 @@ export async function getPrivateKey(public_key: string) {
     return res.data;
 }
 
-export async function downloadReports(tagId: string, loadingString: string) {
-    const res = await httpClient.get(`/keys/fetch/${tagId}`, { loadingString });
+export async function downloadReports(tagId?: string, loadingString = 'Fetching reports for all keys') {
+    const res = await httpClient.get(tagId ? `/keys/fetch/${tagId}` : '/keys/fetch/all', { loadingString });
     return res.data;
 }
 
 export async function getReports(query: string) {
-    const res = await httpClient.post(`/api/v2/query?org=${import.meta.env.VITE_INFLUXDB_ORG}`,
-        { query, type: "flux" },
-        {
-            baseURL: import.meta.env.VITE_INFLUXDB_URL,
-            headers: { Authorization: `Token ${import.meta.env.VITE_INFLUXDB_TOKEN}` },
-            loadingString: 'Fetching reports'
-        }
-    )
+    const res = await httpClient.post(`/influxdb`, { query, type: "flux" }, { loadingString: 'Fetching reports' });
     return res.data;
 }
 

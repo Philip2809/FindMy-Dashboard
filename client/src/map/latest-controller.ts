@@ -15,7 +15,7 @@ export class LatestController {
 
     constructor(
         public setClickedReports: useState<ReportPoint[]>,
-        public setSeeingReports: useState<ReportPoint[]>
+        public setSeeingReports: useState<ReportPoint[] | null>,
     ) {}
 
     setMap(map: maplibregl.Map) {
@@ -51,7 +51,7 @@ export class LatestController {
 
         // MAX 500 reports to show, if the users want to view so many reports at once (why?) they can click on the reports they want more info about
         if (features.length > 500) {
-            this.setSeeingReports([]);
+            this.setSeeingReports(null);
             return; // Too many reports to display, TODO: show error to user about this as well
         }
         features.sort((a, b) => b.properties.timestamp - a.properties.timestamp);

@@ -4,7 +4,7 @@ import { getTags } from "./network/tags";
 
 function getQuery(timeRange: string, latest?: number) {
     return `
-    from(bucket: "${import.meta.env.VITE_INFLUXDB_BUCKET}")
+    from(bucket: "BUCKET_NAME_HERE")
         |> range(start: -${timeRange})
         ${latest ? `|> tail(n: ${latest})` : ""}
         |> keep(columns: ["_time", "_field", "_value", "_measurement"])
@@ -19,7 +19,6 @@ export interface Report {
     longitude: number;
     latitude: number;
     timestamp: number;
-    published_at: number;
     hashed_public_key: string;
     horizontal_accuracy: number;
     confidence: number;

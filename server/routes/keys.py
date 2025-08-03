@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-import urllib
 from models.key import Key
 from db import db
 from models.tag import Tag
@@ -101,7 +100,7 @@ def fetch_all_reports():
     keys = Key.query.all()
     res = utils.fetch_reports.get_reports([key.get_private_key() for key in keys])
 
-    return jsonify(res), 200
+    return res
 
 # Refresh reports by tag
 @keys_blueprint.route('/fetch', methods=['POST'])
@@ -126,4 +125,4 @@ def fetch_reports(tag_id=None):
 
     res = utils.fetch_reports.get_reports([key.get_private_key() for key in keys])
 
-    return jsonify(res), 200
+    return res

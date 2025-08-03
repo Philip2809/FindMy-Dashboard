@@ -15,20 +15,23 @@
   margin: 10px;
   background-color: #39375B;
   border-radius: 5px;
-}
 
-.showReports {
   display: flex;
   align-items: center;
   justify-content: center;
-    padding: 0 10px;
+
+}
+
+.showReports,
+.mapSettings {
+  padding: 0 10px;
 
 
-  input {
+  /* input {
     width: 30px;
     height: 30px;
     cursor: pointer;
-  }
+  } */
 }
 
 .rangeSelector {
@@ -56,13 +59,62 @@
   }
 }
 
-.displayReportsBtn {
-    cursor: pointer;
-    color: white;
-    transition: all 0.3s ease;
-    
-    &:hover {
-        color: #888bbb; /* Tomato color on hover */
-        transform: scale(1.2);
-    }
+.displayReportsBtn,
+.mapSettingsBtn {
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #888bbb;
+    /* Tomato color on hover */
+    transform: scale(1.2);
+  }
+}
+
+.filterCheckbox::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  transform: scale(0);
+  transition: 300ms transform ease-in-out;
+  box-shadow: inset 20px 20px black;
+  border-radius: 3px;
+}
+
+.filterCheckbox:checked::before {
+  transform: scale(1);
+}
+
+.filterCheckbox {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #39375B;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 22px;
+  height: 22px;
+  border-radius: 0.15em;
+  display: grid;
+  place-content: center;
+  border: 2px solid black;
+  border-radius: 3px;
+}
+
+.filterCheckbox.red::before {
+  box-shadow: inset 20px 20px red;
+}
+.filterCheckbox.yellow::before {
+  box-shadow: inset 20px 20px yellow;
+}
+.filterCheckbox.lightgreen::before {
+  box-shadow: inset 20px 20px lightgreen;
+}
+
+.filterCheckboxes {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 0 10px;
 }

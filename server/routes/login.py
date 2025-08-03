@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
 import utils
 import utils.login
 
@@ -27,5 +27,12 @@ def create_tag(method_index: int):
 @login_blueprint.route('/2fa-code/<string:code>', methods=['POST'])
 def submit_2fa_code(code):
     res = utils.login.submit_2fa_code(code)
+    
+    return res.to_json()
+
+# Clear account
+@login_blueprint.route('/', methods=['DELETE'])
+def clear_account():
+    res = utils.login.clear_account()
     
     return res.to_json()

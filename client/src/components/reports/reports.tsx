@@ -9,7 +9,7 @@ import DataContext from '../../context/data';
 import { ReportPoint } from '../../data';
 import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
-import { FaExchangeAlt, FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
 import { Dialog } from '../dialog/Dialog';
 const Conf_Colors: { [key: number]: string } = {
     1: 'red',
@@ -33,56 +33,65 @@ const Reports = () => {
                     </div>
                 </div>
                 <div style={{ flexGrow: 1 }}>
-                    {
-                        (context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length) === 0 && (
-                            <div className={styles.noReports}>
-                                <span>No reports in view</span>
-                            </div>
-                        )
-                    }
-                    <AutoSizer>
-                        {({ height, width }: Size) => (
-                            <FixedSizeList
-                                className={styles.reports}
-                                height={height}
-                                width={width}
-                                itemSize={75}
-                                itemCount={(context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length)}
-                                overscanCount={5}>
-                                {({ index, style }: ListChildComponentProps) => {
-                                    const report = (context.clickedReports.length ? context.clickedReports : context.seeingReports)[index];
-                                    if (!report) return <div />;
-                                    const tag = context?.tags.get(report.properties.tagId);
-                                    if (!tag) return null;
 
-                                    return (
-                                        <div style={style}>
-                                            <div className={sharedStyles.listItem} key={index} onClick={() => {
-                                                context.setSelectedReport(report);
-                                            }}>
-                                                <div className={sharedStyles.icon} style={{ color: tag.color }}>
-                                                    <ReactIcon icon={tag.icon} />
-                                                </div>
-                                                <div className={sharedStyles.name}>
-                                                    {tag.name}
-                                                </div>
-                                                <div className={sharedStyles.details}>
-                                                    {formatTime(report.properties.timestamp)}
-                                                </div>
-                                                <div className={sharedStyles.actions}>
-                                                    <FaInfoCircle style={{ color: Conf_Colors[report.properties.confidence] }} className={sharedStyles.btn} onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setSelectedReportDialog(report);
-                                                    }} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }}
-                            </FixedSizeList>
+                    {context.seeingReports === null ? (
+                        <div className={styles.noReports}>
+                            <span>Too many reports to show</span>
+                        </div>
+                    ) : (
+                        <>
+                            {
+                                (context.clickedReports.length ? context.clickedReports.length : context.seeingReports.length) === 0 && (
+                                    <div className={styles.noReports}>
+                                        <span>No reports in view</span>
+                                    </div>
+                                )
+                            }
+                            <AutoSizer>
+                                {({ height, width }: Size) => (
+                                    <FixedSizeList
+                                        className={styles.reports}
+                                        height={height}
+                                        width={width}
+                                        itemSize={75}
+                                        itemCount={(context.clickedReports.length ? context.clickedReports.length : context.seeingReports?.length || 0)}
+                                        overscanCount={5}>
+                                        {({ index, style }: ListChildComponentProps) => {
+                                            const report = (context.clickedReports.length ? context.clickedReports : context.seeingReports)?.[index];
+                                            if (!report) return null;
+                                            const tag = context?.tags.get(report.properties.tagId);
+                                            if (!tag) return null;
 
-                        )}
-                    </AutoSizer>
+                                            return (
+                                                <div style={style}>
+                                                    <div className={sharedStyles.listItem} key={index} onClick={() => {
+                                                        context.setSelectedReport(report);
+                                                    }}>
+                                                        <div className={sharedStyles.icon} style={{ color: tag.color }}>
+                                                            <ReactIcon icon={tag.icon} />
+                                                        </div>
+                                                        <div className={sharedStyles.name}>
+                                                            {tag.name}
+                                                        </div>
+                                                        <div className={sharedStyles.details}>
+                                                            {formatTime(report.properties.timestamp)}
+                                                        </div>
+                                                        <div className={sharedStyles.actions}>
+                                                            <FaInfoCircle style={{ color: Conf_Colors[report.properties.confidence] }} className={sharedStyles.btn} onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedReportDialog(report);
+                                                            }} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }}
+                                    </FixedSizeList>
+
+                                )}
+                            </AutoSizer>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -93,10 +102,8 @@ const Reports = () => {
                 <br />
                 <span>Report time: {formatTime(selectedReportDialog.properties.timestamp)}</span>
                 <br />
-                <span>Published time: {formatTime(selectedReportDialog.properties.published_at)}</span>
-                <br />
                 <span>Hashed public key: {selectedReportDialog.properties.hashed_public_key}</span>
-            </Dialog> }
+            </Dialog>}
         </>
     )
 

@@ -24,18 +24,20 @@ hashed_public_key - key used to search the database
 - finish up key settings ✅
     - private key btn needs css ✅
     - add copy button for it as well ✅
-    - make the code more compact here
-- fully remove mui
-- fix the viewing and clicked reports list
+- fully remove mui✅
+- fix the viewing and clicked reports list ✅
 - fix the buttons for opening said list ✅
-- sync all button
-- remove account data to restart
-- osm provider and allow user to change to maptiler with api key
-- if error during sync, show error message
-- move dialog code into different files
+- sync all button ✅
+- remove account data to restart ✅
+- osm provider and allow user to change to maptiler with api key ✅
+- proxy call for influxdb ✅
+- if error during sync, show error message ✅
+
+
 - test all features and find bugs
-    - in the low quality the filters is not working
+    - in the low quality the filters is not working ✅
 - write guide and readme
+- TEST THE ENTIRE LOGIN FLOW + if unauthorized by removing device via apple ✅
 - DOCKERIZE!
 - automatic data fetching
 
@@ -46,9 +48,14 @@ hashed_public_key - key used to search the database
 - generate binary for different chips
 - event-driven stuff, based on device status byte AND/OR key used
 - groups, both for data fetching, hide/show and to select bucket to save data in
+- geofencing
+- rehaul localstorage system, if used more
 - incremental keys?
 - better historical viewer
 - allow devices to have same private key?
+- influxdb bucket is hardcoded, allow user to change it, in the future.
+- code cleanup
+    - move dialog code into different files
 - sizing inconsistencies
 - compile all theme stuff into one file and use variables better
 - the reports info can get prettier

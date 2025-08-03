@@ -2,30 +2,18 @@
 import styles from './tags.module.scss';
 import sharedStyles from '../components.module.scss';
 
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
-import { useContext, useRef, useState } from "react";
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Avatar, Button, Chip, DialogActions, DialogContent, DialogTitle, Stack } from '@mui/material';
+import { useContext, useState } from "react";
 import DataContext from '../../context/data';
-import { ReportPoint, reportsToGeoJSON } from '../../data';
+import { reportsToGeoJSON } from '../../data';
 import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
-import { getMacAddress } from '../../utils/key-utils';
 import { FaInfoCircle, FaPlus, FaSync } from 'react-icons/fa';
-import { Dialog, TagDialog, TagEditDialog } from '../dialog/Dialog';
-import { Tag } from '../../@types';
+import { TagDialog, TagEditDialog } from '../dialog/Dialog';
 import { TbAuth2Fa } from 'react-icons/tb';
 import { login } from '../../network/auth';
 import { downloadReports } from '../../network/keys';
-const Conf_Colors: { [key: number]: string } = {
-    1: 'red',
-    2: 'yellow',
-    3: 'lightgreen'
-};
 
 const Tags = () => {
     const context = useContext(DataContext);
@@ -45,6 +33,7 @@ const Tags = () => {
                         <span>Tags</span>
                     </div>
                     <div>
+                        <FaSync className={sharedStyles.listActionButton} onClick={() => downloadReports().then(() => context.refreshData())} />
                         <TbAuth2Fa className={sharedStyles.listActionButton} onClick={() => login() } />
                         <FaPlus className={sharedStyles.listActionButton} onClick={() => setNewTagDialogOpen(true) } />
                     </div>
@@ -61,8 +50,6 @@ const Tags = () => {
                                 overscanCount={5}>
                                 {({ index, style }: ListChildComponentProps) => {
                                     const tag = tags[index];
-                                    // const reports = context.seeingReports.filter(report => report.properties.tagId === tag.id);
-                                    // const latestReport = reports.length > 0 ? reports[0] : undefined;
                                     const latestReport = context.reports.get(tag.id)?.sort((a, b) => b.timestamp - a.timestamp)[0];
                                     if (!tag) return null;
 
@@ -80,7 +67,6 @@ const Tags = () => {
                                                 </div>
                                                 <div className={sharedStyles.name}>
                                                     <span>{tag.name}</span>
-                                                    <span className={styles.tagLabel}> {tag.label}</span>
                                                 </div>
                                                 <div className={sharedStyles.details}>
                                                     {latestReport ? formatTime(latestReport.timestamp) : 'No reports in timeframe'}

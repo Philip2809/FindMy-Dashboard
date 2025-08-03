@@ -6,7 +6,6 @@ from flask import jsonify
 
 from findmy.reports import (
     AppleAccount,
-    BaseAnisetteProvider,
     LoginState,
     SmsSecondFactorMethod,
     TrustedDeviceSecondFactorMethod,
@@ -90,6 +89,7 @@ def get_current_2fa_state() -> ClientAction:
     elif twofa_state == TwoFAState.SUBMIT_CODE:
         return Enter2FACode()
 
+
 def start_new_login() -> ClientAction:
     """Starts a new login process, returns the available 2FA methods if 2FA is required."""
     global twofa_methods, twofa_state
@@ -97,7 +97,7 @@ def start_new_login() -> ClientAction:
     if twofa_state is not TwoFAState.UNINITIATED:
         return get_current_2fa_state()
 
-    account = AppleAccount(ANISETTE)
+    account = AppleAccount(anisette=ANISETTE)
     email = os.getenv("APPLE_EMAIL")
     password = os.getenv("APPLE_PASSWORD")
 
@@ -117,6 +117,12 @@ def start_new_login() -> ClientAction:
     
     # No 2FA required, login successful
     twofa_state = TwoFAState.UNINITIATED
+    
+    # Save the account state after successful login
+    saveStatus = save_account(account)
+    if saveStatus is not None:
+        return saveStatus
+
     return ShowMessage("Login successful.", 200)
 
 
@@ -151,12 +157,10 @@ def submit_2fa_code(code: str):
     except:
         return ShowMessage("Failed to submit code; most likely the code was typed wrong", 400)
 
-    try:
-        # Save the account state after successful login
-        with ACCOUNT_STORE.open("w+") as f:
-            json.dump(twofa_method.account.export(), f)
-    except:
-        return ShowMessage("Failed to save account state after successful login.", 500)
+    # Save the account state after successful login
+    saveStatus = save_account(twofa_method.account)
+    if saveStatus is not None:
+        return saveStatus
 
     # Reset state after successful login
     twofa_state = TwoFAState.UNINITIATED
@@ -165,43 +169,29 @@ def submit_2fa_code(code: str):
 
     return ShowMessage("2FA code submitted successfully. Login complete.", 200)
 
-def _login_sync(account: AppleAccount) -> None:
-    email = os.getenv("APPLE_EMAIL")
-    password = os.getenv("APPLE_PASSWORD")
+def save_account(account: AppleAccount):
+    try:
+        account.to_json(ACCOUNT_STORE)
+    except:
+        return ShowMessage("Failed to save account state after successful login.", 500)
 
-    state = account.login(email, password)
 
-    if state == LoginState.REQUIRE_2FA:  # Account requires 2FA
-        # This only supports SMS methods for now
-        methods = account.get_2fa_methods()
-
-        # Print the (masked) phone numbers
-        for i, method in enumerate(methods):
-            if isinstance(method, TrustedDeviceSecondFactorMethod):
-                print(f"{i} - Trusted Device")
-            elif isinstance(method, SmsSecondFactorMethod):
-                print(f"{i} - SMS ({method.phone_number})")
-
-        ind = int(input("Method? > "))
-
-        method = methods[ind]
-        method.request()
-        code = input("Code? > ")
-
-        # This automatically finishes the post-2FA login flow
-        method.submit(code)
-
-def get_account_sync(anisette: BaseAnisetteProvider) -> AppleAccount:
-    """Tries to restore a saved Apple account, or prompts the user for login otherwise. (sync)"""
-    acc = AppleAccount(anisette)
+def get_account():
+    """Tries to restore a saved Apple account, or prompts the user for login otherwise."""
+    acc = AppleAccount(anisette=ANISETTE)
 
     # Save / restore account logic
     try:
-        with ACCOUNT_STORE.open() as f:
-            acc.restore(json.load(f))
+        acc.from_json(ACCOUNT_STORE)
     except FileNotFoundError:
-        _login_sync(acc)
-        with ACCOUNT_STORE.open("w+") as f:
-            json.dump(acc.export(), f)
+        return ShowMessage("No saved account found. Please start a new login process.", 404)
 
     return acc
+
+def clear_account():
+    """Clears the saved Apple account."""
+    if ACCOUNT_STORE.exists():
+        ACCOUNT_STORE.unlink()
+        return ShowMessage("Account cleared successfully.", 200)
+    else:
+        return ShowMessage("No account to clear.", 404)

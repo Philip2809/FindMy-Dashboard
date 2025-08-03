@@ -11,8 +11,8 @@ export type DataStateContext = {
     reports: Reports;
     refreshData: () => void;
 
-    seeingReports: ReportPoint[];
-    setSeeingReports: useState<ReportPoint[]>;
+    seeingReports: ReportPoint[] | null; // null means too many reports to show
+    setSeeingReports: useState<ReportPoint[]  | null>; // null means too many reports to show
 
     clickedReports: ReportPoint[];
     setClickedReports: useState<ReportPoint[]>;

@@ -99,6 +99,7 @@ export class LatestLayer {
 
         this.map.setFilter(LatestMapLayers.main, filter);
         this.map.setFilter(LatestMapLayers.confidence, filter);
+        this.map.setFilter(LatestMapLayers.mainLowDetail, filter);
     }
 
     setDetailLevel(useLowDetail: boolean) {

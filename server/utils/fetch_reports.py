@@ -1,6 +1,6 @@
 import os
 
-from utils.login import get_account_sync
+from utils.login import ShowMessage, get_account
 from findmy import KeyPair
 from findmy.reports import RemoteAnisetteProvider
 import influxdb_client, os, time
@@ -19,15 +19,18 @@ write_api = write_client.write_api(write_options=SYNCHRONOUS)
 
 def get_reports(keys: list[str]):
     keys = [KeyPair.from_b64(key) for key in keys]
-    acc = get_account_sync(
-        RemoteAnisetteProvider(anisette_server),
-    )
-    reports = acc.fetch_last_reports(keys)
+    accORshowMessage = get_account()
+    if isinstance(accORshowMessage, ShowMessage):
+        return accORshowMessage.to_json()
+
+    try:
+        reports = accORshowMessage.fetch_last_reports(keys)
+    except Exception as e:
+        print(f"Error fetching reports: {e}")
+        return ShowMessage(f"Failed to fetch reports, most likely you need to redo 2FA. Error from FindMy.py: {e}", 500).to_json()
     points = []
-    result = {}
     for key in reports:
         print(key, len(reports[key]))
-        result[key.hashed_adv_key_b64] = len(reports[key])
         for report in sorted(reports[key]):
             point = (
                 Point(report.hashed_adv_key_b64)
@@ -36,11 +39,10 @@ def get_reports(keys: list[str]):
                 .field("confidence", report.confidence)
                 .field("horizontal_accuracy", report.horizontal_accuracy)
                 .field("status", report.status)
-                .field("published_at", time.mktime(report.published_at.timetuple()) * 1000)
                 .time(report.timestamp)
             )
             points.append(point)
-            
-    
+
     write_api.write(bucket=bucket, org=org, record=points)
-    return result
+
+    return {}, 200

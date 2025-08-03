@@ -1,5 +1,27 @@
 import { useState } from "react";
 
+export function getOsmStyle(): maplibregl.StyleSpecification {
+    return {
+        "version": 8,
+        "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+        "sources": {
+            "basemap": {
+                "type": "raster" as const,
+                "tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                "tileSize": 256,
+                "attribution": "<a href='http://www.openstreetmap.org/copyright' target='_blank'>© OpenStreetMap contributors</a> <a href='https://maplibre.org' target='_blank'>© MapLibre</a>",
+                "maxzoom": 19
+            }
+        },
+        "layers": [
+            {
+                "id": "basemap",
+                "type": "raster",
+                "source": "basemap"
+            }
+        ]
+    };
+}
 
 export function formatTime(time: number) {
     const today = new Date();
@@ -24,10 +46,3 @@ export function formatTime(time: number) {
 
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
-
-export const useForceUpdate = () => {
-    const [_, setValue] = useState(0); // integer state
-    return () => setValue(value => value + 1); // update state to force render
-    // A function that increment 👆🏻 the previous state like here 
-    // is better than directly setting `setValue(value + 1)`
-  }

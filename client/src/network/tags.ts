@@ -16,3 +16,9 @@ export async function deleteTag(tagId: string, loadingString: string) {
     const res = await httpClient.delete(`/tags/${tagId}`, { loadingString });
     return res.data;
 }
+
+// This function should be in another file probobly, but its not the end of the world for now hehe
+export async function clearAccount() {
+    const res = await httpClient.delete('/login', { loadingString: 'Clearing account' });
+    return res.data;
+}

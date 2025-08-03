@@ -8,7 +8,7 @@ import { FaCog, FaCopy, FaEye, FaPlus, FaTrash } from 'react-icons/fa';
 import { useContext, useRef, useState } from 'react';
 import DataContext from '../../context/data';
 import { addKey, deleteKey, getPrivateKey, updateKey } from '../../network/keys';
-import { deleteTag, addOrUpdateTag } from '../../network/tags';
+import { deleteTag, addOrUpdateTag, clearAccount } from '../../network/tags';
 import { CopyText } from '../copy-text';
 
 
@@ -308,6 +308,38 @@ export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void
                 <input type='text' placeholder='React icon (fa/FaTag)' defaultValue={tag?.icon} ref={keyIconRef} onChange={inputChange} className={styles.addKeyInput} />
                 <input type='text' placeholder='Icon color (any css color)' defaultValue={tag?.color} ref={keyColorRef} onChange={inputChange} className={styles.addKeyInput} />
             </div>
+        </Dialog>
+    )
+}
+
+export const SettingsDialog = ({ onClose }: { onClose: () => void }) => {
+    const context = useContext(DataContext);
+    if (!context) return null;
+
+    const mapProviderRef = useRef<HTMLInputElement>(null);
+
+    return (
+        <Dialog title={'Settings'} onClose={onClose} actions={[
+            {
+                label: 'Clear logged in account',
+                onClick: () => {
+                    clearAccount().then(() => onClose());
+                }
+            },
+            {
+                label: 'Save',
+                onClick: () => {
+                    const mapProvider = mapProviderRef.current?.value || 'osm';
+                    localStorage.setItem('mapProvider', mapProvider);
+                    onClose();
+                }
+            },
+            { label: 'Cancel', onClick: onClose }
+        ]}>
+            <span>Map Provider</span>
+            <br />
+            <span style={{ fontSize: 'small' }}>Enter url for maplibre/mapbox style <b>OR</b> <code>osm</code> for default OpenStreetMap style</span>
+            <input type='text' placeholder='Name' defaultValue={localStorage.getItem('mapProvider') || 'osm'} ref={mapProviderRef} className={styles.addKeyInput} />
         </Dialog>
     )
 }
