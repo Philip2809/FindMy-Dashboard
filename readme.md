@@ -27,6 +27,7 @@ View all screenshots in the [docs](./docs/docs.md).
 - Filter by report confidence or by tags (click on the tag icon to toggle visibility)
 
 ## Running
+### Docker
 The easiest way is to use the supplied `docker-compose.yml` file. It will start the following services:
 - InfluxDB 2.x
     - The key data; location reports will be stored here
@@ -40,12 +41,14 @@ The easiest way is to use the supplied `docker-compose.yml` file. It will start 
     - Periodically fetch data, default is every hour, <b>don't go below every 15 minutes</b> to avoid being banned
     - (For now its own separate service, but will later be done directly in the dashboard service)
 
-- Copy `docker-compose.env` to `.env` and place it next to the `docker-compose.yml` file. Fill in the values as instructed in the file. 
-- Run `docker compose up -d` to start the services.
-- Go to `http://localhost:8000`
+### Step-by-step
+1. Copy `docker-compose.env` to `.env` and place it next to the `docker-compose.yml` file. Fill in the values as instructed in the file. 
+2. Run `docker compose up -d` to start the services.
+3. Go to `http://localhost:8000`
 
-NOTE: First time please wait for anisette to be ready, will update compose soon to wait for it automatically.
-NOTE: The automatic fetching of data is not ready yet, nor is the sync all button. Need to use the new api, currently still on the old one, will be updated soon.
+<b>NOTE:</b> First time please wait for anisette to be ready, will update compose soon to wait for it automatically.
+
+<b>NOTE:</b> The automatic fetching of data is not ready yet, nor is the sync all button. Need to use the new api, currently still on the old one, will be updated soon.
 
 ## Debug & Development
 
@@ -99,7 +102,7 @@ Copy `dev.env` to `.env` in the `server` directory and fill in the values. If yo
 - maybe make the copy private key button select the text?
 - pwa?
 
-### Credits
+## Credits
 - @malmeloo for [FindMy.py](https://github.com/malmeloo/FindMy.py)
 - @biemster for [FindMy](https://github.com/biemster/FindMy)
 - @Dadoum for [anisette-v3-server](https://github.com/Dadoum/anisette-v3-server)
