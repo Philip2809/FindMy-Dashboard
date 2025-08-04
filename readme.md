@@ -75,6 +75,7 @@ Copy `dev.env` to `.env` in the `server` directory and fill in the values. If yo
 - `docker push findmydashboard/full`
 
 #### Roadmap:
+- make a logo
 - Flat color icons don't work!
 - Auto wait for anisette server to be ready
 - export/import keys and tags
