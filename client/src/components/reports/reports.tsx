@@ -9,8 +9,8 @@ import DataContext from '../../context/data';
 import { ReportPoint } from '../../data';
 import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
-import { FaInfoCircle } from 'react-icons/fa';
 import { Dialog } from '../dialog/Dialog';
+import { FaInfoCircle } from '../icons/icons';
 const Conf_Colors: { [key: number]: string } = {
     1: 'red',
     2: 'yellow',

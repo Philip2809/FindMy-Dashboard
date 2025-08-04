@@ -14,7 +14,7 @@ from findmy.reports import (
 
 from findmy.reports.twofactor import SyncSecondFactorMethod
 
-ANISETTE_URL = os.getenv("ANISETTE_SERVER")
+ANISETTE_URL = os.getenv("ANISETTE_URL")
 ANISETTE = RemoteAnisetteProvider(ANISETTE_URL)
 
 ACCOUNT_STORE = Path("apple_creds.json")
@@ -98,8 +98,8 @@ def start_new_login() -> ClientAction:
         return get_current_2fa_state()
 
     account = AppleAccount(anisette=ANISETTE)
-    email = os.getenv("APPLE_EMAIL")
-    password = os.getenv("APPLE_PASSWORD")
+    email = os.getenv("ICLOUD_EMAIL")
+    password = os.getenv("ICLOUD_PASSWORD")
 
     try:
         account_state = account.login(email, password)

@@ -5,9 +5,9 @@ import requests
 influxdb_blueprint = Blueprint('influxdb', __name__)
 
 INFLUXDB_URL = os.getenv("INFLUXDB_URL")
-INFLUXDB_TOKEN = os.getenv("INFLUXDB_TOKEN")
 INFLUXDB_ORG = os.getenv("INFLUXDB_ORG")
 INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET")
+INFLUXDB_TOKEN = os.getenv("INFLUXDB_TOKEN")
 
 # Proxy for InfluxDB, mostly to avoid CORS but also so you only need to one url in the config
 

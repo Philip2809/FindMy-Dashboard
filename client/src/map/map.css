@@ -67,7 +67,6 @@
 
   &:hover {
     color: #888bbb;
-    /* Tomato color on hover */
     transform: scale(1.2);
   }
 }

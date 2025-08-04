@@ -2,7 +2,7 @@ import maplibregl from "maplibre-gl";
 import { reportsToGeoJSON } from "../data";
 import { Reports, Tags } from "../@types";
 import { LatestMapLayers } from "./enums";
-import ReactIcon, { renderReactElementToImage } from "../icon";
+import { convertIconToImage } from "../icon";
 
 type DEFAULT_FILTER = [
     'case',
@@ -51,7 +51,7 @@ export class LatestLayer {
 
             if (this.map.hasImage(tag.icon) || loadingImages.has(tag.icon)) return;
             loadingImages.add(tag.icon);
-            renderReactElementToImage(<ReactIcon icon={tag.icon} size={32} />).then((icon) => {
+            convertIconToImage(tag.icon).then((icon) => {
                 if (!icon) return;
                 this.map.addImage(tag.icon, icon, { sdf: true });
                 loadingImages.delete(tag.icon);

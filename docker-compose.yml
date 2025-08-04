@@ -1,0 +1,85 @@
+services:
+  influxdb2:
+    image: 'influxdb:2'
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=init_admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    volumes:
+      - influxdb2_data:/var/lib/influxdb2
+      - influxdb2_config:/etc/influxdb2
+    restart: always
+
+
+  anisette:
+    image: 'dadoum/anisette-v3-server'
+    volumes:
+      - 'anisette_data:/home/Alcoholic/.config/anisette-v3/lib/'
+    restart: always
+
+
+  postgres:
+    image: 'postgres:17'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+    restart: always
+
+
+  findmy-dashboard:
+    image: 'findmydashboard/full:latest'
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - ANISETTE_URL=http://anisette:6969
+      - INFLUXDB_URL=http://influxdb2:8086
+      - INFLUXDB_ORG=${INFLUXDB_ORG}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - ICLOUD_EMAIL=${ICLOUD_EMAIL}
+      - ICLOUD_PASSWORD=${ICLOUD_PASSWORD}
+    ports:
+      - '8000:8000'
+    depends_on:
+        postgres:
+          condition: service_healthy
+        influxdb2: 
+          condition: service_started
+        anisette:
+          condition: service_started
+    restart: always
+
+
+  # SEE README
+  # cron:
+  #   image: alpine
+  #   command: sh -c "
+  #     apk add tzdata
+  #     && ln -s /usr/share/zoneinfo/${TZ} /etc/localtime
+  #     | echo \"*/60 * * * * wget -qO- http://findmy-dashboard:8000/api/keys/fetch/all;echo\" 
+  #     | crontab - 
+  #     && crond -f -L /dev/stdout"
+  #   depends_on:
+  #     - findmy-dashboard
+  #   restart: always
+  #   environment:
+  #     - TZ=
+
+
+
+volumes:
+  influxdb2_data: null
+  influxdb2_config: null
+  anisette_data: null
+  postgres_data: null

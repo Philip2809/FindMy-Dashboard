@@ -5,11 +5,10 @@ import './map.css';
 import DataContext from "../context/data";
 import { LatestController } from "./latest-controller";
 import { useState } from "../@types";
-import { FaCog, FaList } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
 import { getOsmStyle } from "../utils";
 import React from "react";
 import { SettingsDialog } from "../components/dialog/Dialog";
+import { FaCog, FaList, FaXmark } from "../components/icons/icons";
 
 let firstWithData = true;
 

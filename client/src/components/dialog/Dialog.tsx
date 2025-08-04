@@ -1,15 +1,14 @@
 
-import { FaXmark } from 'react-icons/fa6';
 import { Key, Tag } from '../../@types';
 import ReactIcon from '../../icon';
 import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
-import { FaCog, FaCopy, FaEye, FaPlus, FaTrash } from 'react-icons/fa';
 import { useContext, useRef, useState } from 'react';
 import DataContext from '../../context/data';
 import { addKey, deleteKey, getPrivateKey, updateKey } from '../../network/keys';
 import { deleteTag, addOrUpdateTag, clearAccount } from '../../network/tags';
 import { CopyText } from '../copy-text';
+import { FaCog, FaCopy, FaEye, FaPlus, FaTrash, FaXmark } from '../icons/icons';
 
 
 interface DialogProps {

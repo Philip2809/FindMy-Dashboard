@@ -1,49 +1,81 @@
 ## FindMy Dashboard
-work in progress
+Probably the easist way to manage and visualize your Openhaystack devices
 
+FindMy Dashboard is a web-based dashboard for creating, managing and visualizing your Openhaystack devices. It uses [FindMy.py](https://github.com/malmeloo/FindMy.py) in the backend to fetch the location reports, decryptes them with the private keys stored in your local postgres database, saves the data to InfluxDB and visualizes
+the data on a maplibre map. 
+
+Currently only static openhaystack keys are supported, the web view is optimized for desktop use, a mobile view is planned, maybe even an app, or integration into an existing one.
 
 > [!WARNING]  
 > Currently, this project does not include authentication. The design is intended for self-hosting on a local network and is not meant to be exposed to the internet.
 
-## VERY IMPORTANT - READ ME!
-<b>  </b>
-#
+## Minidemo
+|Reports of tag|Keys used on tag|Reports by tag|
+|----|----|----|
+|![Reports of tag](./docs/screenshots/data-with-report-view.png)|![Keys connected to tag](./docs/screenshots/tag-with-key.png)|![Closeup of tag](./docs/screenshots/tag-closeup.png)|
 
-## notes:
-
-keys:
-private_key - private, only you should have this
-public_key - key advertised by the ble beacon
-hashed_public_key - key used to search the database
-
+View all screenshots in the [docs](./docs/docs.md).
 
 ## Features
-- 2FA managment
+- 2FA login
+- Add tags and keys, currently only supports static keys
+- Fetch data via [FindMy.py](https://github.com/malmeloo/FindMy.py) and save to InfluxDB
+- Show data on a map, request different time ranges & amount of reports
+- View currently rendered reports in a list, or show the reports you have selected, accuracy circle
+- Customize the map with your own style (e.g. maptiler)
+- Customize tag icon and color
+- Filter by report confidence or by tags (click on the tag icon to toggle visibility)
 
-### Todo before release:
-- finish up key settings ✅
-    - private key btn needs css ✅
-    - add copy button for it as well ✅
-- fully remove mui✅
-- fix the viewing and clicked reports list ✅
-- fix the buttons for opening said list ✅
-- sync all button ✅
-- remove account data to restart ✅
-- osm provider and allow user to change to maptiler with api key ✅
-- proxy call for influxdb ✅
-- if error during sync, show error message ✅
+## Running
+The easiest way is to use the supplied `docker-compose.yml` file. It will start the following services:
+- InfluxDB 2.x
+    - The key data; location reports will be stored here
+- Postgres
+    - The dashboard data; tags, keys will be stored here
+- Anisette server
+    - Used by FindMy.py
+    - (For now this is used, later this will be replaced by the built-in FindMy.py Anisette support)
+- FindMy Dashboard
+- cron
+    - Periodically fetch data, default is every hour, <b>don't go below every 15 minutes</b> to avoid being banned
+    - (For now its own separate service, but will later be done directly in the dashboard service)
 
+- Copy `docker-compose.env` to `.env` and place it next to the `docker-compose.yml` file. Fill in the values as instructed in the file. 
+- Run `docker compose up -d` to start the services.
+- Go to `http://localhost:8000`
 
-- test all features and find bugs
-    - in the low quality the filters is not working ✅
-- write guide and readme
-- TEST THE ENTIRE LOGIN FLOW + if unauthorized by removing device via apple ✅
-- DOCKERIZE! ✅
-- automatic data fetching
+NOTE: First time please wait for anisette to be ready, will update compose soon to wait for it automatically.
+NOTE: The automatic fetching of data is not ready yet, nor is the sync all button. Need to use the new api, currently still on the old one, will be updated soon.
 
-### To be improved:
-- allow user to customize data fetch interval
+## Debug & Development
+
+Copy `dev.env` to `.env` in the `server` directory and fill in the values. If you don't have have Anisette, postgres or InfluxDB running you can copy the docker compose and remove the `findmy-dashboard` service, then use that as a base to run as a local dev environment. (At some point I will make a separate dev compose)
+
+### Server
+
+1. `cd server`
+2. `python -m venv .venv`
+3. `. .venv/bin/activate`
+4. Set python interpreter to the one in the .venv
+5. `pip install -r requirements.txt`
+6. `python app.py`
+
+### Client
+
+1. `cd client`
+2. `npm i -g pnpm` (if you don't have it installed)
+3. `pnpm i`
+4. `pnpm dev`
+
+## Building
+- `docker build -t findmydashboard/full .`
+- `docker push findmydashboard/full`
+
+#### Roadmap:
+- Flat color icons don't work!
+- Auto wait for anisette server to be ready
 - export/import keys and tags
+- write more and better docs
 - allow user to set when "low quality" is used
 - generate binary for different chips
 - event-driven stuff, based on device status byte AND/OR key used
@@ -67,21 +99,8 @@ hashed_public_key - key used to search the database
 - maybe make the copy private key button select the text?
 - pwa?
 
-## Debug
-
-The .env file setup is not very pretty yet, working on a better setup for this as well
-
-### Server
-
-1. `cd server`
-2. `python -m venv .venv`
-3. `. .venv/bin/activate`
-4. Set python interpreter to the one in the .venv
-5. `pip install -r requirements.txt`
-6. `python app.py`
-
-### Client
-
-1. `cd client`
-2. `pnpm i`
-3. `pnpm run dev`
+### Credits
+- @malmeloo for [FindMy.py](https://github.com/malmeloo/FindMy.py)
+- @biemster for [FindMy](https://github.com/biemster/FindMy)
+- @Dadoum for [anisette-v3-server](https://github.com/Dadoum/anisette-v3-server)
+- [Track You](https://petsymposium.org/popets/2023/popets-2023-0102.pdf) and [Who Can Find My Devices?](https://doi.org/10.2478/popets-2021-0045) (@seemo-lab)

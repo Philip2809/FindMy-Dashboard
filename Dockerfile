@@ -27,5 +27,4 @@ COPY --from=client-builder /client/dist ./static
 EXPOSE 8000
 
 # Run app
-CMD ["flask", "db", "upgrade"]
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
+CMD flask db upgrade && gunicorn -b 0.0.0.0:8000 app:app

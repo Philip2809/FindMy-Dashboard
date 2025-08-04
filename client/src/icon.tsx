@@ -1,84 +1,72 @@
-import * as ai from "react-icons/ai";
-import * as bi from "react-icons/bi";
-import * as bs from "react-icons/bs";
-import * as cg from "react-icons/cg";
-import * as ci from "react-icons/ci";
-import * as di from "react-icons/di"
-import * as fa from "react-icons/fa"
-import * as fa6 from "react-icons/fa6"
-import * as fc from "react-icons/fc"
-import * as fi from "react-icons/fi"
-import * as gi from "react-icons/gi"
-import * as go from "react-icons/go"
-import * as gr from "react-icons/gr"
-import * as hi from "react-icons/hi"
-import * as hi2 from "react-icons/hi2"
-import * as im from "react-icons/im"
-import * as io from "react-icons/io"
-import * as io5 from "react-icons/io5"
-import * as lia from "react-icons/lia"
-import * as lu from "react-icons/lu"
-import * as md from "react-icons/md"
-import * as pi from "react-icons/pi"
-import * as ri from "react-icons/ri"
-import * as rx from "react-icons/rx"
-import * as si from "react-icons/si"
-import * as sl from "react-icons/sl"
-import * as tb from "react-icons/tb"
-import * as tfi from "react-icons/tfi"
-import * as ti from "react-icons/ti"
-import * as vsc from "react-icons/vsc"
-import * as wi from "react-icons/wi"
+import React, { useEffect, useReducer } from "react";
+import ReactDOM from "react-dom/client";
+import { IconType } from "react-icons";
+import { FaTag } from "./components/icons/icons";
 
-const libs: { [key: string]: any } = {
-  "ai": ai,
-  "bi": bi,
-  "bs": bs,
-  "cg": cg,
-  "ci": ci,
-  "di": di,
-  "fa": fa,
-  "fa6": fa6,
-  "fc": fc,
-  "fi": fi,
-  "gi": gi,
-  "go": go,
-  "gr": gr,
-  "hi": hi,
-  "hi2": hi2,
-  "im": im,
-  "io": io,
-  "io5": io5,
-  "lia": lia,
-  "lu": lu,
-  "md": md,
-  "pi": pi,
-  "ri": ri,
-  "rx": rx,
-  "si": si,
-  "sl": sl,
-  "tb": tb,
-  "tfi": tfi,
-  "ti": ti,
-  "vsc": vsc,
-  "wi": wi,
+// This is not the prettiest way to handle the icons, but the react part needs non-async
+// While the icons to show on the map need a promise to resolve, to know when the icon is ready.
+
+const libCache = new Map<string, ReturnType<(typeof importMap)[keyof typeof importMap]> | Awaited<ReturnType<(typeof importMap)[keyof typeof importMap]>>>();
+
+const importMap = {
+  ai: () => import("react-icons/ai"),
+  bi: () => import("react-icons/bi"),
+  bs: () => import("react-icons/bs"),
+  cg: () => import("react-icons/cg"),
+  ci: () => import("react-icons/ci"),
+  di: () => import("react-icons/di"),
+  fa: () => import("react-icons/fa"),
+  fa6: () => import("react-icons/fa6"),
+  fc: () => import("react-icons/fc"),
+  fi: () => import("react-icons/fi"),
+  gi: () => import("react-icons/gi"),
+  go: () => import("react-icons/go"),
+  gr: () => import("react-icons/gr"),
+  hi: () => import("react-icons/hi"),
+  hi2: () => import("react-icons/hi2"),
+  im: () => import("react-icons/im"),
+  io: () => import("react-icons/io"),
+  io5: () => import("react-icons/io5"),
+  lia: () => import("react-icons/lia"),
+  lu: () => import("react-icons/lu"),
+  md: () => import("react-icons/md"),
+  pi: () => import("react-icons/pi"),
+  ri: () => import("react-icons/ri"),
+  rx: () => import("react-icons/rx"),
+  si: () => import("react-icons/si"),
+  sl: () => import("react-icons/sl"),
+  tb: () => import("react-icons/tb"),
+  tfi: () => import("react-icons/tfi"),
+  ti: () => import("react-icons/ti"),
+  vsc: () => import("react-icons/vsc"),
+  wi: () => import("react-icons/wi"),
 };
 
-function ReactIcon({ icon, size }: { icon: string, size?: number }) {
-  const [lib, name] = icon.split("/");
-  const lib_ = libs[lib];
-  if (!lib_) return <fa.FaTag size={size} />;
-  const Icon = lib_[name];
-  if (!Icon) return <fa.FaTag size={size} />;
-  return <Icon size={size} />;
-};
+const defaultIcon = (size?: number) => <FaTag size={size} />;
+
+function ReactIcon({ icon: iconString, size }: { icon: string; size?: number }) {
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const [lib, name] = iconString.split("/") as [keyof typeof importMap, string];
+  if (!lib || !name || name === 'default') return defaultIcon(size);
+
+  const loadedLib = libCache.get(lib);
+  if (loadedLib && !('then' in loadedLib)) {
+    const IconFunc = loadedLib[name as keyof Omit<typeof loadedLib, 'default'>] as IconType;
+    if (IconFunc) return <IconFunc size={size} />;
+  }
+  if (loadedLib) return defaultIcon(size);
+  
+  if (!(lib in importMap)) return defaultIcon(size);
+  loadLib(lib).then(async (loadedLib) => {
+    if (!loadedLib) return;
+    libCache.set(lib, loadedLib)
+    forceUpdate();
+  });
+  return defaultIcon(size);
+}
 
 export default ReactIcon;
-
-
-import ReactDOM from "react-dom/client";
-import { useEffect } from "react";
-
 
 function IconWrapper({ children, onRendered }: { children: React.ReactNode; onRendered: () => void }) {
   useEffect(() => {
@@ -88,12 +76,19 @@ function IconWrapper({ children, onRendered }: { children: React.ReactNode; onRe
   return children;
 }
 
-export async function renderReactElementToImage(icon: React.ReactNode) {
+export async function convertIconToImage(icon: string) {
   const container = document.createElement("div");
   const root = ReactDOM.createRoot(container);
 
+  const [lib, name] = icon.split("/") as [keyof typeof importMap, string];
+  const loadedLib = await loadLib(lib);
+  let IconFunc: IconType;
+  if (!loadedLib || name === 'default') IconFunc = FaTag;
+  else IconFunc = loadedLib[name as keyof Omit<typeof loadedLib, 'default'>]
+  if (!IconFunc) IconFunc = FaTag;
+
   await new Promise<void>((resolve) => {
-    root.render(<IconWrapper onRendered={resolve}> {icon} </IconWrapper>);
+    root.render(<IconWrapper onRendered={resolve}> <IconFunc size={32} /> </IconWrapper>);
   });
 
   const svgData = container.innerHTML;
@@ -112,3 +107,13 @@ export async function renderReactElementToImage(icon: React.ReactNode) {
   container.remove();
   return img;
 }
+
+async function loadLib(lib: keyof typeof importMap) {
+  if (libCache.has(lib)) return libCache.get(lib);
+  const importer = importMap[lib];
+  if (!importer) return;
+  const loadedLib = importer();
+  libCache.set(lib, loadedLib);
+  return loadedLib;
+}
+

@@ -9,12 +9,11 @@ import DataContext from '../../context/data';
 import { reportsToGeoJSON } from '../../data';
 import ReactIcon from '../../icon';
 import { formatTime } from '../../utils';
-import { FaInfoCircle, FaPlus, FaSync } from 'react-icons/fa';
 import { TagDialog, TagEditDialog } from '../dialog/Dialog';
-import { TbAuth2Fa } from 'react-icons/tb';
 import { login } from '../../network/auth';
 import { downloadReports } from '../../network/keys';
 import { Tag } from '../../@types';
+import { FaInfoCircle, FaPlus, FaSignInAlt, FaSync } from '../icons/icons';
 
 const Tags = () => {
     const context = useContext(DataContext);
@@ -36,7 +35,7 @@ const Tags = () => {
                     </div>
                     <div>
                         <FaSync className={sharedStyles.listActionButton} onClick={() => downloadReports().then(() => context.refreshData())} />
-                        <TbAuth2Fa className={sharedStyles.listActionButton} onClick={() => login() } />
+                        <FaSignInAlt className={sharedStyles.listActionButton} onClick={() => login() } />
                         <FaPlus className={sharedStyles.listActionButton} onClick={() => setNewTagDialogOpen(true) } />
                     </div>
                 </div>

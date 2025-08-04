@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import sharedStyles from './components.module.scss';
-import { FaCopy } from "react-icons/fa";
+import { FaCopy } from './icons/icons';
 
 export const CopyText = ({ children, text }: { children?: React.ReactNode; text: string; }) => {
 

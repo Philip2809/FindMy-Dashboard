@@ -21,6 +21,8 @@
 # Docker
 Dockerfile
 docker-compose.yml
+.env
 
 # FindMy Dashboard
 server/apple_creds.json
+docs/
