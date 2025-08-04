@@ -17,7 +17,8 @@ from findmy.reports.twofactor import SyncSecondFactorMethod
 ANISETTE_URL = os.getenv("ANISETTE_URL")
 ANISETTE = RemoteAnisetteProvider(ANISETTE_URL)
 
-ACCOUNT_STORE = Path("apple_creds.json")
+# ACCOUNT_STORE = Path("apple_creds.json") # DEV
+ACCOUNT_STORE = Path("/creds/icloud.json") # PROD (also make this in a nicer way haha)
 
 class TwoFAState(Enum):
     """Represents the state of the account setup process."""

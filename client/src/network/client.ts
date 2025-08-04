@@ -9,7 +9,8 @@ import { actionInterceptor, actionInterceptorError } from './interceptors/action
 import { requestLoadingIdInterceptor, requestLoadingInterceptor, responseLoadingInterceptor, responseLoadingInterceptorError } from './interceptors/loading.interceptor'
 
 const httpClient = axios.create({
-  baseURL: '/api',
+  baseURL: '/api', // PROD
+  // baseURL: 'http://localhost:8000/api',// DEV (make this in a nicer way haha)
 })
 
 

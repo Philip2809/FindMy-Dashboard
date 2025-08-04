@@ -50,6 +50,8 @@ services:
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - ICLOUD_EMAIL=${ICLOUD_EMAIL}
       - ICLOUD_PASSWORD=${ICLOUD_PASSWORD}
+    volumes:
+      - findmydashboard_data:/creds
     ports:
       - '8000:8000'
     depends_on:
@@ -84,3 +86,4 @@ volumes:
   influxdb2_config: null
   anisette_data: null
   postgres_data: null
+  findmydashboard_data: null
