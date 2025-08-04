@@ -41,6 +41,7 @@ services:
   findmy-dashboard:
     image: 'findmydashboard/full:latest'
     environment:
+      - USE_PROXY=false
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - ANISETTE_URL=http://anisette:6969
       - INFLUXDB_URL=http://influxdb2:8086

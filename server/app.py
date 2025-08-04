@@ -13,9 +13,15 @@ from routes.influxdb import influxdb_blueprint
 import config
 from flask_migrate import Migrate
 from db import db
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Initialize Flask app
 app = Flask(__name__)
+
+
+USE_PROXY = os.getenv("USE_PROXY", "false").lower() == "true"
+if USE_PROXY:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # Enable CORS
 CORS(app)
