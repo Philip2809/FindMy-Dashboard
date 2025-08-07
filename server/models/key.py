@@ -8,7 +8,7 @@ class Key(db.Model):
     public_key = db.Column(db.String, nullable=False, primary_key=True)
     hashed_public_key = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=True)
-    tag_id = db.Column(db.String, db.ForeignKey('tag.id', ondelete='CASCADE'), nullable=False)
+    tag_id = db.Column(db.String, db.ForeignKey('item.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.Integer, default=lambda: int(time.time()), nullable=False)
 
     def __init__(self, private_key, public_key, hashed_public_key, label, tag_id):

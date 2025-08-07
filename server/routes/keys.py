@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models.key import Key
 from db import db
-from models.tag import Tag
+from models.item import Item
 from utils.login import ShowMessage
 from utils.keygen import keygen
 import utils.fetch_reports
@@ -22,7 +22,7 @@ def create_key():
         return jsonify({'error': 'Missing required fields (tag_id)'}), 400
 
     # make sure the tag exists
-    tag = Tag.query.get(tag_id)
+    tag = Item.query.get(tag_id)
     if not tag:
         return jsonify({'error': 'Tag not found'}), 404
 

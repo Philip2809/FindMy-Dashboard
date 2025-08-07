@@ -4,8 +4,8 @@ from db import db
 
 CUID_GENERATOR: Cuid = Cuid(length=24)
 
-class Tag(db.Model):
-    __tablename__ = 'tag'
+class Item(db.Model):
+    __tablename__ = 'item'
 
     id = db.Column(db.String, primary_key=True, default=CUID_GENERATOR.generate)
     icon = db.Column(db.String, nullable=False)

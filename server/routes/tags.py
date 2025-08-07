@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models.tag import Tag
+from models.item import Item
 from models.key import Key
 from db import db
 
@@ -23,7 +23,7 @@ def create_tag():
         return ShowMessage("Missing required fields", 400).to_json()
 
     if id:
-        existing_tag = Tag.query.get(id)
+        existing_tag = Item.query.get(id)
         if not existing_tag:
             return jsonify({'error': 'Tag not found'}), 404
         # Update existing tag
@@ -36,7 +36,7 @@ def create_tag():
         return jsonify(existing_tag.to_dict()), 200
         
     
-    tag = Tag(icon, name, description, color)
+    tag = Item(icon, name, description, color)
     db.session.add(tag)
     db.session.commit()
     
@@ -46,7 +46,7 @@ def create_tag():
 # Get all tags
 @tags_blueprint.route('/', methods=['GET'])
 def get_tags():
-    tags = Tag.query.all()
+    tags = Item.query.all()
 
 
     # return Pick2FAMethod(["trusted", "sms"]).to_json()
@@ -61,7 +61,7 @@ def get_tags():
 # Delete a tag by ID
 @tags_blueprint.route('/<string:id>', methods=['DELETE'])
 def delete_tag(id):
-    tag = Tag.query.get(id)
+    tag = Item.query.get(id)
     if not tag:
         return jsonify({'error': 'Tag not found'}), 404
     
