@@ -7,6 +7,7 @@ load_dotenv()
 from flask import Flask, request, Response, send_from_directory
 from flask_cors import CORS
 from routes.tags import tags_blueprint
+from routes.beacons import beacons_blueprint
 from routes.keys import keys_blueprint
 from routes.login import login_blueprint
 from routes.influxdb import influxdb_blueprint
@@ -40,6 +41,7 @@ Migrate(app, db)
 
 # Register blueprints (routes)
 app.register_blueprint(tags_blueprint, url_prefix='/api/tags')
+app.register_blueprint(beacons_blueprint, url_prefix='/api/beacons')
 app.register_blueprint(keys_blueprint, url_prefix='/api/keys')
 app.register_blueprint(login_blueprint, url_prefix='/api/login')
 app.register_blueprint(influxdb_blueprint, url_prefix='/api/influxdb')
