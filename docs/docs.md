@@ -1,18 +1,15 @@
 
+### Explanation of system
+
+- Item
+    - An item is a physical thing that you put a <b>beacon</b> on. E.g. a keychain, a backpack etc.
+- Beacon
+    - A beacon is a physical device that can emit BLE signals. 
+    - Types:
+        - Static Beacon
+            - A static beacon is a beacon that advertises the same public key all the time.
+        - List Beacon
+
 
 ## Minidemo
-#### Inital dashboard view:
-![](./screenshots/dashboard-empty.png)
-#### 2FA required for FindMy.py to work:
-![](./screenshots/2fa-method.png)
-![](./screenshots/2fa-code.png)
-#### Add a tag:
-![](./screenshots/add-tag.png)
-#### Add a key:
-![](./screenshots/edit-key.png)
-![](./screenshots/tag-with-key.png)
-#### See the data:
-![](./screenshots/data-with-report-view.png)
-![](./screenshots/tag-closeup.png)
-#### Customize the map:
-![](./screenshots/customize-map.png)
+[minidemo](./minidemo.md)
