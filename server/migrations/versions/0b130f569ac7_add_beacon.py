@@ -23,7 +23,6 @@ def upgrade():
     sa.Column('item_id', sa.String(), nullable=False),
     sa.Column('label', sa.String(), nullable=True),
     sa.Column('type', sa.String(), nullable=False),
-    sa.Column('first_byte_random', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['item_id'], ['item.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )

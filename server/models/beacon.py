@@ -19,17 +19,14 @@ class Beacon(db.Model):
         self.item_id = item_id
         self.label = label
 
-# Check if random first byte is actually something that works, if not remove the first_byte_random field
 class StaticBeacon(Beacon):
-    first_byte_random = db.Column(db.Boolean, default=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'static',
     }
 
-    def __init__(self, item_id, label=None, first_byte_random=False):
+    def __init__(self, item_id, label=None):
         super().__init__(item_id, label)
-        self.first_byte_random = first_byte_random
 
 # class ListBeacon(Beacon):
 
