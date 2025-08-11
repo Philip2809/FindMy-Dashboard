@@ -14,6 +14,8 @@ class Item(db.Model):
     color = db.Column(db.String, nullable=False)
     created_at = db.Column(db.Integer, default=lambda: int(time.time()), nullable=False)
 
+    beacons = db.relationship("Beacon", back_populates="item", cascade="all, delete-orphan")
+
     def __init__(self, icon, name, description, color):
         self.icon = icon
         self.name = name

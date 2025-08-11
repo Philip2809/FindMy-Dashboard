@@ -1,14 +1,15 @@
 
-import { Key, Tag } from '../../@types';
+import { Beacon, Key, Tag } from '../../@types';
 import ReactIcon from '../../icon';
 import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import DataContext from '../../context/data';
 import { addKey, deleteKey, getPrivateKey, updateKey } from '../../network/keys';
-import { deleteTag, addOrUpdateTag, clearAccount } from '../../network/tags';
+import { deleteTag, addOrUpdateTag, clearAccount } from '../../network/items';
 import { CopyText } from '../copy-text';
 import { FaCog, FaCopy, FaEye, FaPlus, FaTrash, FaXmark } from '../icons/icons';
+import { beaconService } from '../../network/beacons';
 
 
 interface DialogProps {
@@ -57,6 +58,13 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     const [removeTagDialog, setRemoveTagDialog] = useState<string>(); // tag id
     const [removeKeyDialog, setRemoveKeyDialog] = useState<string>(); // public key of key
     const [editKeyDialog, setEditKeyDialog] = useState<Key>(); // public key of key
+    const [beacons, setBeacons] = useState<Beacon[]>([]);
+
+    useEffect(() => {
+        beaconService.getBeacons(tag.id, `Loading beacons for tag "${tag.name}"`).then((keys) => {
+            setBeacons(keys);
+        });
+    }, []);
 
     const addKeyRef = useRef<HTMLInputElement>(null);
     const addKeyLabelRef = useRef<HTMLInputElement>(null);
@@ -93,7 +101,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                     <FaPlus className={styles.addKeyBtn} onClick={() => { setAddKeyDialogOpen(true) }} />
                 </div>
                 <div className={styles.keys}>
-                    {tag.keys.map((key, index) => {
+                    {beacons.map((key, index) => {
                         const macAddress = getMacAddress(key.public_key);
 
                         return (

@@ -1,19 +1,22 @@
 import { Tag, TagHttpUpdate } from "../@types";
 import { httpClient } from "./client";
 
+export const itemService = {
+    getItems,
+};
 
-export async function getTags() {
-    const tags = await httpClient.get<Tag[]>('/tags', { loadingString: 'Fetching tags' });
-    return tags.data;
+async function getItems() {
+    const items = await httpClient.get<Tag[]>('/items', { loadingString: 'Fetching items' });
+    return items.data;
 }
 
 export async function addOrUpdateTag(tag: TagHttpUpdate) {
-    const res = await httpClient.post<TagHttpUpdate>('/tags', tag, { loadingString: 'Saving tag' });
+    const res = await httpClient.post<TagHttpUpdate>('/items', tag, { loadingString: 'Saving tag' });
     return res.data;
 }
 
 export async function deleteTag(tagId: string, loadingString: string) {
-    const res = await httpClient.delete(`/tags/${tagId}`, { loadingString });
+    const res = await httpClient.delete(`/items/${tagId}`, { loadingString });
     return res.data;
 }
 
