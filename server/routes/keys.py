@@ -9,6 +9,7 @@ import utils.fetch_reports
 keys_blueprint = Blueprint('keys', __name__)
 
 # CRD for keys, no need for update
+# Most of this file will be removed soon, due to much logic moving to beacons
 
 # Create a new key
 @keys_blueprint.route('/', methods=['POST'])

@@ -1,6 +1,6 @@
 import { Report, ReportPoint } from "../data";
 
-
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export type useState<T> = React.Dispatch<React.SetStateAction<T>>
 
 export type Tags = Map<string, Tag>; // Tag ID -> Tag
@@ -29,6 +29,30 @@ export type DataStateContext = {
     setReportsPerTag: useState<number>;
 };
 
+export enum BeaconType {
+    STATIC = "static",
+    LIST = "list"
+}
+
+interface BaseBeacon {
+    id: string;
+    item_id: string;
+    label?: string;
+}
+
+export interface StaticBeacon extends BaseBeacon {
+    type: BeaconType.STATIC;
+    public_key?: string;
+}
+
+export interface ListBeacon extends BaseBeacon {
+    type: BeaconType.LIST;
+    list_id: string;
+}
+
+export type Beacon = StaticBeacon | ListBeacon;
+
+
 export interface Key {
     tag_id: string;
     label?: string;
@@ -49,5 +73,5 @@ export interface TagHttpUpdate {
 }
 export interface Tag extends TagHttpUpdate {
     id: string;
-    keys: Key[];
+    // keys: Key[];
 }

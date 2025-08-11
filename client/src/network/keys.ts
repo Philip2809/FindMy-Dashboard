@@ -1,4 +1,5 @@
 import { Key } from "../@types";
+import { Report } from "../data";
 import { httpClient } from "./client";
 
 
@@ -22,8 +23,13 @@ export async function downloadReports(tagId?: string, loadingString = 'Fetching 
     return res.data;
 }
 
-export async function getReports(query: string) {
-    const res = await httpClient.post(`/influxdb`, { query, type: "flux" }, { loadingString: 'Fetching reports' });
+// export async function getReports(query: string) {
+//     const res = await httpClient.post(`/influxdb`, { query, type: "flux" }, { loadingString: 'Fetching reports' });
+//     return res.data;
+// }
+
+export async function getReportsTest(timeRange: string, reportsPerTag: number) {
+    const res = await httpClient.get<{ [key: string]: Report[] }>(`/influxdb?time_range=${timeRange}`, { loadingString: 'Fetching reports' });
     return res.data;
 }
 

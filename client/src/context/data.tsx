@@ -1,11 +1,14 @@
 import { createContext, useEffect, useState } from 'react';
 import { DataStateContext, Reports, Tags } from '../@types';
-import { DataReceiver, ReportPoint } from '../data';
+import { ReportPoint } from '../data';
 import styles from './data.module.scss';
 import { loadingDispatcher } from '../utils/dispatchers/loading.dispatcher';
+import { getReportsTest } from '../network/keys';
+import { itemService } from '../network/items';
 const DataContext = createContext<DataStateContext | null>(null)
 
 export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
+    // TODO: investigate if map is really the best way to store the data.
     const [tags, setTags] = useState<Tags>(new Map());
     const [reports, setReports] = useState<Reports>(new Map());
     const [seeingReports, setSeeingReports] = useState<ReportPoint[] | null>([]);
@@ -14,16 +17,16 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
     const [disabledTags, setDisabledTags] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState<{ id: string, message: string }[]>([]);
 
-    const [timeRange, setTimeRange] = useState('24h');
+    const [timeRange, setTimeRange] = useState('240h');
     const [reportsPerTag, setReportsPerTag] = useState(30);
 
-    const refreshData = () => {
-        DataReceiver.getLatest(timeRange, reportsPerTag).then((res) => {
-            if (!res) return;
-            setTags(res.mappedTags);
-            setReports(res.mappedReports);
-        });
-    }
+    const refreshData = () => getReportsTest(timeRange, reportsPerTag).then((reports) => {
+        setReports(new Map(Object.entries(reports)))
+    })
+
+    const getItems = () => itemService.getItems().then((res) => {
+        setTags(new Map(res.map((item) => [item.id, item])));
+    });
 
     const toggleTag = (tagId: string) => {
         setDisabledTags((prev) => {
@@ -46,6 +49,7 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
     }, []);
 
     useEffect(() => {
+        getItems();
         refreshData();
     }, [timeRange, reportsPerTag]);
 
