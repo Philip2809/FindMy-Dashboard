@@ -55,7 +55,7 @@ export const DataProvider = ({ children }: { children: React.JSX.Element }) => {
 
     return (
         <DataContext.Provider value={{
-            tags, reports, refreshData,
+            tags, reports, getItems, refreshData,
             seeingReports, setSeeingReports,
             clickedReports, setClickedReports,
             selectedReport, setSelectedReport,

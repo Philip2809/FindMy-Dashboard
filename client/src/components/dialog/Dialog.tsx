@@ -1,5 +1,5 @@
 
-import { Beacon, Key, Tag } from '../../@types';
+import { Beacon, BeaconType, Key, Tag } from '../../@types';
 import ReactIcon from '../../icon';
 import { getMacAddress } from '../../utils/key-utils';
 import styles from './Dialog.module.scss';
@@ -10,6 +10,7 @@ import { deleteTag, addOrUpdateTag, clearAccount } from '../../network/items';
 import { CopyText } from '../copy-text';
 import { FaCog, FaCopy, FaEye, FaPlus, FaTrash, FaXmark } from '../icons/icons';
 import { beaconService } from '../../network/beacons';
+import { StaticBeacon } from '../beacons/static-beacon';
 
 
 interface DialogProps {
@@ -60,10 +61,13 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     const [editKeyDialog, setEditKeyDialog] = useState<Key>(); // public key of key
     const [beacons, setBeacons] = useState<Beacon[]>([]);
 
+    const loadBeacons = () => 
+    beaconService.getBeacons(tag.id, `Loading beacons for tag "${tag.name}"`).then((keys) => {
+        setBeacons(keys);
+    });
+
     useEffect(() => {
-        beaconService.getBeacons(tag.id, `Loading beacons for tag "${tag.name}"`).then((keys) => {
-            setBeacons(keys);
-        });
+        loadBeacons();
     }, []);
 
     const addKeyRef = useRef<HTMLInputElement>(null);
@@ -97,38 +101,13 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
                 onClose={onClose}>
                 <span>{tag.description}</span>
                 <div className={styles.keysActions}>
-                    <span>Keys:</span>
+                    <span>Beacons:</span>
                     <FaPlus className={styles.addKeyBtn} onClick={() => { setAddKeyDialogOpen(true) }} />
                 </div>
                 <div className={styles.keys}>
-                    {beacons.map((key, index) => {
-                        const macAddress = getMacAddress(key.public_key);
-
-                        return (
-                            <div key={index} className={styles.key}>
-                                <div className={styles.keyInfo}>
-                                    <div className={styles.keyTitle}>
-                                        <CopyText text={key.label || macAddress} />
-                                    </div>
-                                    <div className={styles.keyDetails}>
-                                        {key.label && <><span>MAC: <CopyText text={macAddress}><b>{macAddress}</b></CopyText></span><br /></>}
-                                        <span>Public key: <CopyText text={key.public_key} /> </span>
-                                        <br />
-                                        <span>Hashed public key: <CopyText text={key.hashed_public_key} /> </span>
-                                    </div>
-                                </div>
-
-                                <div className={styles.keyActions}>
-                                    <FaCog className={styles.keyButton} id={styles.settings} onClick={() => setEditKeyDialog(key)} />
-                                    <FaTrash className={styles.keyButton} id={styles.trash} onClick={() => setRemoveKeyDialog(key.public_key)} />
-                                </div>
-                            </div>
-                        )
-                    })}
+                    {beacons.map((beacon, index) => beacon.type === BeaconType.STATIC ? <StaticBeacon key={index} beacon={beacon} onBeaconUpdated={loadBeacons} /> : null)}
                 </div>
             </Dialog>
-
-            {editKeyDialog && <KeySettingsDialog fmKey={editKeyDialog} onClose={() => setEditKeyDialog(undefined)} />}
 
             {removeKeyDialog && <Dialog title='Remove key' onClose={() => setRemoveKeyDialog(undefined)} actions={[
                 {
@@ -192,69 +171,7 @@ export const TagDialog = ({ tag, onClose }: { tag: Tag; onClose: () => void }) =
     );
 }
 
-export const KeySettingsDialog = ({ fmKey, onClose }: { fmKey: Key; onClose: () => void }) => {
-    const context = useContext(DataContext);
-    if (!context) return null;
 
-    const keyLabelRef = useRef<HTMLInputElement>(null);
-    const privateKeyShowRef = useRef<HTMLInputElement>(null);
-
-    return (
-        <Dialog title={'Key settings'} onClose={onClose} actions={[
-            {
-                label: 'Save',
-                onClick: () => {
-                    updateKey({
-                        ...fmKey,
-                        label: keyLabelRef.current?.value || '',
-                    }).then(() => {
-                        context.refreshData();
-                        onClose();
-                    });
-                }
-            },
-            { label: 'Cancel', onClick: onClose }
-        ]}>
-            <span>Label</span>
-            <input type='text' placeholder='Label' defaultValue={fmKey?.label} ref={keyLabelRef} className={styles.addKeyInput} />
-            <span>Private key</span>
-            <div className={styles.keySettingsPrivateKey}>
-                <input type='password' defaultValue={'my very awesome fake private key that yo'} readOnly disabled ref={privateKeyShowRef} className={`${styles.privateKeyInput} ${styles.addKeyInput}`} />
-                <div className={styles.privateKeyActions}>
-                    <FaCopy className={styles.actionBtn} size={24} onClick={() => {
-                        const input = privateKeyShowRef.current;
-                        if (!input) return; // TODO: obscure error handling
-                        if (input.hasAttribute('privKey')) {
-                            navigator.clipboard.writeText(input.value);
-                            input.setSelectionRange(0, input.value.length);
-                            return;
-                        }
-
-                        getPrivateKey(fmKey.public_key).then((privateKey) => {
-                            input.setAttribute('privKey', 'true');
-                            input.value = privateKey;
-                            navigator.clipboard.writeText(privateKey);
-                        });
-                    }} />
-                    <FaEye className={styles.actionBtn} size={32} onClick={() => {
-                        const input = privateKeyShowRef.current;
-                        if (!input) return; // TODO: obscure error handling
-                        if (input.hasAttribute('privKey')) {
-                            input.type = input.type === 'password' ? 'text' : 'password';
-                            return;
-                        }
-
-                        getPrivateKey(fmKey.public_key).then((privateKey) => {
-                            input.setAttribute('privKey', 'true');
-                            input.type = 'text';
-                            input.value = privateKey;
-                        });
-                    }} />
-                </div>
-            </div>
-        </Dialog>
-    )
-}
 
 export const TagEditDialog = ({ tag, onClose }: { tag?: Tag; onClose: () => void }) => {
     const context = useContext(DataContext);

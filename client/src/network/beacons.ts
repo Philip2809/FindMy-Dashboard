@@ -2,7 +2,8 @@ import { httpClient } from "./client";
 
 export const beaconService = {
     addBeacon, // C
-    getBeacons // R
+    getBeacons, // R
+    removeBeacon // D
 }
 
 async function addBeacon(item_id: string, label?: string) {
@@ -15,3 +16,7 @@ async function getBeacons(item_id: string, loadingString: string) {
     return res.data;
 }
 
+async function removeBeacon(beaconId: string) {
+    const res = await httpClient.delete(`/beacons/${beaconId}`, { loadingString: 'Removing beacon' });
+    return res.data;
+}

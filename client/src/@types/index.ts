@@ -9,6 +9,7 @@ export type Reports = Map<string, Report[]>; // Tag ID -> Report[]
 export type DataStateContext = {
     tags: Tags; 
     reports: Reports;
+    getItems: () => void;
     refreshData: () => void;
 
     seeingReports: ReportPoint[] | null; // null means too many reports to show
